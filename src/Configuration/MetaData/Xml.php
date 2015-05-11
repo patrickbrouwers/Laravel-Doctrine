@@ -26,12 +26,4 @@ class Xml extends AbstractMetaData
             $this->getCache()
         ));
     }
-
-    /**
-     * @return mixed
-     */
-    public function getCache()
-    {
-        // TODO: Implement getCache() method.
-    }
 }

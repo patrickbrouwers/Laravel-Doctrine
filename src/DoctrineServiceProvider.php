@@ -2,6 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine;
 
+use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
 use Brouwers\LaravelDoctrine\Configuration\Connections\ConnectionManager;
 use Brouwers\LaravelDoctrine\Configuration\MetaData\MetaDataManager;
 use Doctrine\ORM\EntityManager;
@@ -17,6 +18,7 @@ class DoctrineServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfig();
+        $this->setupCache();
         $this->setupMetaData();
         $this->setupConnection();
         $this->setupEntityManager();
@@ -74,6 +76,16 @@ class DoctrineServiceProvider extends ServiceProvider
         MetaDataManager::registerDrivers(
             $this->app['config']['doctrine.meta.drivers'],
             $this->app['config']['app.debug']
+        );
+    }
+
+    /**
+     * Register the cache drivers
+     */
+    protected function setupCache()
+    {
+        CacheManager::registerDrivers(
+            $this->app['config']['cache.stores']
         );
     }
 }

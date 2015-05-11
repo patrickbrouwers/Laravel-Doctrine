@@ -2,6 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 
+use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
 use Doctrine\ORM\Configuration;
 
 abstract class AbstractMetaData implements MetaData
@@ -58,6 +59,10 @@ abstract class AbstractMetaData implements MetaData
      */
     public function getCache()
     {
-        // TODO: Implement getCache() method.
+        if (config('cache.default')) {
+            return CacheManager::resolve(
+                config('cache.default')
+            )->getCache();
+        }
     }
 }

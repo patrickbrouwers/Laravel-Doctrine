@@ -27,12 +27,4 @@ class Annotations extends AbstractMetaData
             isset($settings['simple']) ? $settings['simple'] : false
         ));
     }
-
-    /**
-     * @return mixed
-     */
-    public function getCache()
-    {
-        // TODO: Implement getCache() method.
-    }
 }

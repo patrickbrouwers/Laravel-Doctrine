@@ -68,3 +68,8 @@ class MetaDataManagerTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(CustomMetaData::class, $driver);
     }
 }
+
+function config()
+{
+    return null;
+}

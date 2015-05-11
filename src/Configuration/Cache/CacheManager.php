@@ -1,69 +1,73 @@
 <?php
 
-namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
+namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
 use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
 use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
 use Closure;
-use Doctrine\ORM\Configuration;
 
-class MetaDataManager implements Extendable
+class CacheManager implements Extendable
 {
     use ExtendableTrait;
 
     /**
+     * @var array
+     */
+    protected $excluded = [
+        'database'
+    ];
+
+    /**
      * @param array $drivers
-     * @param bool  $dev
      *
      * @throws DriverNotFoundException
-     * @return mixed|void
      */
-    public static function registerDrivers(array $drivers = [], $dev = false)
+    public static function registerDrivers(array $drivers = [])
     {
         $manager = static::getInstance();
 
         foreach ($drivers as $name => $driver) {
-            $class = __NAMESPACE__ . '\\' . studly_case($name);
+            if (!in_array($name, $manager->excluded)) {
+                $class = __NAMESPACE__ . '\\' . studly_case($name) . 'CacheProvider';
 
-            if (class_exists($class)) {
-                $driver = (new $class())->configure($driver, $dev);
-                $manager->register($driver);
-            } else {
-                throw new DriverNotFoundException("Driver {$name} is not supported");
+                if (class_exists($class)) {
+                    $driver = (new $class())->configure($driver);
+                    $manager->register($driver);
+                } else {
+                    throw new DriverNotFoundException("Cache driver {$name} is not supported");
+                }
             }
         }
     }
 
     /**
-     * @param         $driver
-     * @param Closure $callback
-     * @param null    $class
+     * @param          $driver
+     * @param callable $callback
+     * @param null     $class
      *
      * @throws CouldNotExtendException
-     * @return MetaData
+     * @return CustomCacheProvider
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)
     {
         if ($callback) {
             $result = call_user_func($callback, $this->get($driver));
 
-            if ($result instanceof MetaData) {
+            if ($result instanceof Cache) {
                 $result->setName($driver);
 
                 return $result;
             }
 
-            if ($result instanceof Configuration) {
-                return new CustomMetaData($result, $driver);
-            }
+            return new CustomCacheProvider($result, $driver);
         }
 
         if (class_exists($class)) {
             $result = new $class;
 
-            if ($result instanceof MetaData) {
+            if ($result instanceof Cache) {
                 $result = $result->configure();
                 $result->setName($driver);
 
@@ -71,6 +75,6 @@ class MetaDataManager implements Extendable
             }
         }
 
-        throw new CouldNotExtendException('Expected an instance of MetaData or Doctrine\ORM\Configuration');
+        throw new CouldNotExtendException('Expected an instance of Cache or Doctrine\Common\Cache');
     }
 }

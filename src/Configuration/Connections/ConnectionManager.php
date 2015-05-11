@@ -5,30 +5,30 @@ namespace Brouwers\LaravelDoctrine\Configuration\Connections;
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
 use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
 use Closure;
-use Doctrine\DBAL\ConnectionException;
 
 class ConnectionManager implements Extendable
 {
     use ExtendableTrait;
 
     /**
-     * @param $connections
+     * @param $drivers
      *
-     * @throws ConnectionException
+     * @throws DriverNotFoundException
      */
-    public static function registerConnections($connections)
+    public static function registerConnections(array $drivers)
     {
-        $connector = static::getInstance();
+        $manager = static::getInstance();
 
-        foreach ($connections as $driver => $connection) {
-            $class = __NAMESPACE__ . '\\' . studly_case($driver) . 'Connection';
+        foreach ($drivers as $name => $driver) {
+            $class = __NAMESPACE__ . '\\' . studly_case($name) . 'Connection';
 
             if (class_exists($class)) {
-                $connection = (new $class())->configure($connection);
-                $connector->register($connection);
+                $driver = (new $class())->configure($driver);
+                $manager->register($driver);
             } else {
-                throw new ConnectionException("Connection {$driver} is not supported");
+                throw new DriverNotFoundException("Connection {$name} is not supported");
             }
         }
     }
