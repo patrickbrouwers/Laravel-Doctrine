@@ -12,6 +12,11 @@ use Illuminate\Support\ServiceProvider;
 class DoctrineServiceProvider extends ServiceProvider
 {
     /**
+     * @var array
+     */
+    protected $config;
+
+    /**
      * Register the service provider.
      * @return void
      */
@@ -38,6 +43,8 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             $path, 'doctrine'
         );
+
+        $this->config = $this->app['config']['doctrine'];
     }
 
     /**
@@ -48,8 +55,8 @@ class DoctrineServiceProvider extends ServiceProvider
         // Bind EntityManager as singleton
         $this->app->singleton('Doctrine\ORM\EntityManager', function () {
             return EntityManager::create(
-                ConnectionManager::resolve($this->app['config']['database.default']),
-                MetaDataManager::resolve($this->app['config']['doctrine.meta.driver'])
+                ConnectionManager::resolve($this->config['connections']['default']),
+                MetaDataManager::resolve($this->config['meta']['driver'])
             );
         });
 
@@ -64,7 +71,7 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function setupConnection()
     {
         ConnectionManager::registerConnections(
-            $this->app['config']['database.connections']
+            $this->app['config']['database']['connections']
         );
     }
 
@@ -74,8 +81,8 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function setupMetaData()
     {
         MetaDataManager::registerDrivers(
-            $this->app['config']['doctrine.meta.drivers'],
-            $this->app['config']['app.debug']
+            $this->config['meta']['drivers'],
+            $this->config['dev']
         );
     }
 
@@ -85,7 +92,7 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function setupCache()
     {
         CacheManager::registerDrivers(
-            $this->app['config']['cache.stores']
+            $this->app['config']['cache']['stores']
         );
     }
 }

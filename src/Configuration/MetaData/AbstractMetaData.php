@@ -37,9 +37,9 @@ abstract class AbstractMetaData implements MetaData
      */
     public function getCache()
     {
-        if (config('cache.default')) {
+        if (config('doctrine.cache.default')) {
             return CacheManager::resolve(
-                config('cache.default')
+                config('doctrine.cache.default')
             );
         }
     }
