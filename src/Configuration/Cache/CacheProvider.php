@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
 use Brouwers\LaravelDoctrine\Configuration\Driver;
 
-interface Cache extends Driver
+interface CacheProvider extends Driver
 {
     /**
      * @param array $config

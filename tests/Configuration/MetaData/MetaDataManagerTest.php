@@ -1,7 +1,7 @@
 <?php
 
+use Brouwers\LaravelDoctrine\Configuration\MetaData\AbstractMetaData;
 use Brouwers\LaravelDoctrine\Configuration\MetaData\Annotations;
-use Brouwers\LaravelDoctrine\Configuration\MetaData\CustomMetaData;
 use Brouwers\LaravelDoctrine\Configuration\MetaData\MetaDataManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\Tools\Setup;
@@ -29,14 +29,14 @@ class MetaDataManagerTest extends PHPUnit_Framework_TestCase
         MetaDataManager::extend('annotations', function ($driver) {
 
             // Should give instance of the already registered driver
-            $this->assertInstanceOf(Annotations::class, $driver);
+            $this->assertInstanceOf(Configuration::class, $driver);
 
             return $driver;
         });
 
-        $driver   = MetaDataManager::resolve('annotations');
+        $driver = MetaDataManager::resolve('annotations');
 
-        $this->assertInstanceOf(Configuration::class, $driver->getConfig());
+        $this->assertInstanceOf(Configuration::class, $driver);
     }
 
     public function test_custom_metadata_can_be_set()
@@ -46,30 +46,41 @@ class MetaDataManagerTest extends PHPUnit_Framework_TestCase
         });
 
         $driver = MetaDataManager::resolve('custom');
-        $this->assertInstanceOf(CustomMetaData::class, $driver);
-        $this->assertInstanceOf(Configuration::class, $driver->getConfig());
-    }
-
-    public function test_a_custom_class_can_be_returned_while_extending()
-    {
-        MetaDataManager::extend('custom2', function () {
-            return new CustomMetaData();
-        });
-
-        $driver = MetaDataManager::resolve('custom2');
-        $this->assertInstanceOf(CustomMetaData::class, $driver);
+        $this->assertInstanceOf(Configuration::class, $driver);
     }
 
     public function test_a_string_class_can_be_use_as_extend()
     {
-        MetaDataManager::extend('custom3', CustomMetaData::class);
+        MetaDataManager::extend('custom3', StubMetaData::class);
 
         $driver = MetaDataManager::resolve('custom3');
-        $this->assertInstanceOf(CustomMetaData::class, $driver);
+        $this->assertEquals('stub', $driver);
     }
 }
 
 function config()
 {
     return null;
+}
+
+class StubMetaData extends AbstractMetaData
+{
+    /**
+     * @return mixed
+     */
+    public function resolve()
+    {
+        return 'stub';
+    }
+
+    /**
+     * @param array $settings
+     * @param bool  $dev
+     *
+     * @return static
+     */
+    public function configure(array $settings = [], $dev = false)
+    {
+        return $this;
+    }
 }

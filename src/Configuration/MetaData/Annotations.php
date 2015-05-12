@@ -19,12 +19,27 @@ class Annotations extends AbstractMetaData
      */
     public function configure(array $settings = [], $dev = false)
     {
-        return new static(Setup::createAnnotationMetadataConfiguration(
-            $settings['paths'],
-            $dev,
-            @$settings['proxies']['path'],
+        $this->settings = [
+            'paths'      => $settings['paths'],
+            'dev'        => $dev,
+            'proxy_path' => @$settings['proxies']['path'],
+            'simple'     => isset($settings['simple']) ? $settings['simple'] : false
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return \Doctrine\ORM\Configuration|mixed
+     */
+    public function resolve()
+    {
+        return Setup::createAnnotationMetadataConfiguration(
+            $this->settings['paths'],
+            $this->settings['dev'],
+            $this->settings['proxy_path'],
             $this->getCache(),
-            isset($settings['simple']) ? $settings['simple'] : false
-        ));
+            $this->settings['simple']
+        );
     }
 }

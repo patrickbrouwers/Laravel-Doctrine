@@ -2,27 +2,12 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
-use Doctrine\Common\Cache\Cache as DoctrineCache;
-
-abstract class AbstractCache implements Cache
+abstract class AbstractCacheProvider implements CacheProvider
 {
     /**
-     * @var DoctrineCache
+     * @var array
      */
-    protected $cache;
-
-    /**
-     * @param DoctrineCache $cache
-     * @param null          $name
-     */
-    public function __construct(DoctrineCache $cache = null, $name = null)
-    {
-        $this->cache = $cache;
-
-        if ($name) {
-            $this->name = $name;
-        }
-    }
+    protected $config;
 
     /**
      * @return mixed

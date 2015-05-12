@@ -46,12 +46,6 @@ class ConnectionManager implements Extendable
         if ($callback) {
             $result = call_user_func($callback, $this->get($driver));
 
-            if ($result instanceof Connection) {
-                $result->setName($driver);
-
-                return $result;
-            }
-
             return new CustomConnection($result, $driver);
         }
 

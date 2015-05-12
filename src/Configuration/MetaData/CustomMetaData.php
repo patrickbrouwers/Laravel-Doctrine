@@ -5,11 +5,18 @@ namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 class CustomMetaData extends AbstractMetaData
 {
     /**
-     * @return string
+     * @var
      */
-    public function getName()
+    protected $meta;
+
+    /**
+     * @param $meta
+     * @param $name
+     */
+    public function __construct($meta, $name)
     {
-        return $this->name;
+        $this->meta = $meta;
+        $this->name = $name;
     }
 
     /**
@@ -21,5 +28,13 @@ class CustomMetaData extends AbstractMetaData
     public function configure(array $settings = [], $dev = false)
     {
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function resolve()
+    {
+        return $this->meta;
     }
 }

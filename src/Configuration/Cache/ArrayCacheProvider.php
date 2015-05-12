@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
 use Doctrine\Common\Cache\ArrayCache;
 
-class ArrayCacheProvider extends AbstractCache
+class ArrayCacheProvider extends AbstractCacheProvider
 {
     /**
      * @var string
@@ -19,8 +19,14 @@ class ArrayCacheProvider extends AbstractCache
      */
     public function configure($config = [])
     {
-        return new static(
-            new ArrayCache()
-        );
+        return $this;
+    }
+
+    /**
+     * @return ArrayCache
+     */
+    public function resolve()
+    {
+        return new ArrayCache();
     }
 }

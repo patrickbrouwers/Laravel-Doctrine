@@ -19,11 +19,25 @@ class Xml extends AbstractMetaData
      */
     public function configure(array $settings = [], $dev = false)
     {
-        return new static(Setup::createXMLMetadataConfiguration(
-            $settings['paths'],
-            $dev,
-            @$settings['proxies']['path'],
+        $this->settings = [
+            'paths'      => $settings['paths'],
+            'dev'        => $dev,
+            'proxy_path' => @$settings['proxies']['path']
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return \Doctrine\ORM\Configuration|mixed
+     */
+    public function resolve()
+    {
+        return Setup::createXMLMetadataConfiguration(
+            $this->settings['paths'],
+            $this->settings['dev'],
+            $this->settings['proxy_path'],
             $this->getCache()
-        ));
+        );
     }
 }

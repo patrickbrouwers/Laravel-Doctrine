@@ -49,12 +49,6 @@ class MetaDataManager implements Extendable
         if ($callback) {
             $result = call_user_func($callback, $this->get($driver));
 
-            if ($result instanceof MetaData) {
-                $result->setName($driver);
-
-                return $result;
-            }
-
             if ($result instanceof Configuration) {
                 return new CustomMetaData($result, $driver);
             }

@@ -30,7 +30,7 @@ abstract class AbstractConnection implements Connection
     /**
      * @return array
      */
-    public function getSettings()
+    public function resolve()
     {
         return $this->settings;
     }

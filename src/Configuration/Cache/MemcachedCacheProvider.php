@@ -2,10 +2,11 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
 use Doctrine\Common\Cache\MemcachedCache;
 use Memcached;
 
-class MemcachedCacheProvider extends AbstractCache
+class MemcachedCacheProvider extends AbstractCacheProvider
 {
     /**
      * @var string
@@ -20,12 +21,23 @@ class MemcachedCacheProvider extends AbstractCache
      */
     public function configure($config = [])
     {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @throws DriverNotFoundException
+     * @return MemcachedCache
+     */
+    public function resolve()
+    {
         $cache = new MemcachedCache();
 
         if (extension_loaded('memcached')) {
             $memcached = new Memcached();
 
-            foreach ($config['servers'] as $server) {
+            foreach ($this->config['servers'] as $server) {
                 $memcached->addServer(
                     $server['host'],
                     $server['port'],
@@ -34,10 +46,10 @@ class MemcachedCacheProvider extends AbstractCache
             }
 
             $cache->setMemcached($memcached);
+
+            return $cache;
         }
 
-        return new static(
-            $cache
-        );
+        throw new DriverNotFoundException('Memcached extension not loaded');
     }
 }

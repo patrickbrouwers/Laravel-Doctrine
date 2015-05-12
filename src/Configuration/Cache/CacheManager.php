@@ -55,20 +55,14 @@ class CacheManager implements Extendable
         if ($callback) {
             $result = call_user_func($callback, $this->get($driver));
 
-            if ($result instanceof Cache) {
-                $result->setName($driver);
-
-                return $result;
-            }
-
             return new CustomCacheProvider($result, $driver);
         }
 
         if (class_exists($class)) {
             $result = new $class;
 
-            if ($result instanceof Cache) {
-                $result = $result->configure();
+            if ($result instanceof CacheProvider) {
+                $result->configure();
                 $result->setName($driver);
 
                 return $result;

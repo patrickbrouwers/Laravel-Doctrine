@@ -1,7 +1,7 @@
 <?php
 
+use Brouwers\LaravelDoctrine\Configuration\Cache\AbstractCacheProvider;
 use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
-use Brouwers\LaravelDoctrine\Configuration\Cache\CustomCacheProvider;
 use Brouwers\LaravelDoctrine\Configuration\Cache\FileCacheProvider;
 use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\ORM\Tools\Setup;
@@ -29,14 +29,14 @@ class CacheManagerTest extends PHPUnit_Framework_TestCase
         CacheManager::extend('file', function ($driver) {
 
             // Should give instance of the already registered driver
-            $this->assertInstanceOf(FileCacheProvider::class, $driver);
+            $this->assertInstanceOf(PhpFileCache::class, $driver);
 
             return $driver;
         });
 
         $driver = CacheManager::resolve('file');
 
-        $this->assertInstanceOf(PhpFileCache::class, $driver->getCache());
+        $this->assertInstanceOf(PhpFileCache::class, $driver);
     }
 
     public function test_custom_cache_can_be_set()
@@ -46,25 +46,35 @@ class CacheManagerTest extends PHPUnit_Framework_TestCase
         });
 
         $driver = CacheManager::resolve('custom');
-        $this->assertInstanceOf(CustomCacheProvider::class, $driver);
-        $this->assertInstanceOf(PhpFileCache::class, $driver->getCache());
-    }
-
-    public function test_a_custom_class_can_be_returned_while_extending()
-    {
-        CacheManager::extend('custom2', function () {
-            return new CustomCacheProvider();
-        });
-
-        $driver = CacheManager::resolve('custom2');
-        $this->assertInstanceOf(CustomCacheProvider::class, $driver);
+        $this->assertInstanceOf(PhpFileCache::class, $driver);
     }
 
     public function test_a_string_class_can_be_use_as_extend()
     {
-        CacheManager::extend('custom3', CustomCacheProvider::class);
+        CacheManager::extend('custom3', StubCacheProvider::class);
 
         $driver = CacheManager::resolve('custom3');
-        $this->assertInstanceOf(CustomCacheProvider::class, $driver);
+        $this->assertEquals('stub', $driver);
+    }
+}
+
+class StubCacheProvider extends AbstractCacheProvider
+{
+    /**
+     * @param array $config
+     *
+     * @return array
+     */
+    public function configure($config = [])
+    {
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function resolve()
+    {
+        return 'stub';
     }
 }

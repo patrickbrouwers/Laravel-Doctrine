@@ -48,7 +48,7 @@ trait ExtendableTrait
     public function get($driver, $default = null)
     {
         if (isset($this->drivers[$driver])) {
-            return $this->drivers[$driver];
+            return $this->drivers[$driver]->resolve();
         }
 
         return $default;

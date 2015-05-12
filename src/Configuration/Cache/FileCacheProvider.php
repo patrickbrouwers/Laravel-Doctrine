@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
 use Doctrine\Common\Cache\PhpFileCache;
 
-class FileCacheProvider extends AbstractCache
+class FileCacheProvider extends AbstractCacheProvider
 {
     /**
      * @var string
@@ -19,8 +19,16 @@ class FileCacheProvider extends AbstractCache
      */
     public function configure($config = [])
     {
-        return new static(
-            new PhpFileCache($config['path'])
-        );
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @return PhpFileCache
+     */
+    public function resolve()
+    {
+        return new PhpFileCache($this->config['path']);
     }
 }

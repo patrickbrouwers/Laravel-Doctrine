@@ -3,40 +3,18 @@
 namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 
 use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
-use Doctrine\ORM\Configuration;
 
 abstract class AbstractMetaData implements MetaData
 {
     /**
-     * @var Configuration
+     * @var array
      */
-    protected $config;
+    protected $settings = [];
 
     /**
-     * @var
+     * @var string
      */
     protected $name;
-
-    /**
-     * @param Configuration $config
-     * @param null          $name
-     */
-    public function __construct(Configuration $config = null, $name = null)
-    {
-        $this->config = $config;
-
-        if ($name) {
-            $this->name = $name;
-        }
-    }
-
-    /**
-     * @return Configuration
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
 
     /**
      * @return mixed
@@ -62,7 +40,7 @@ abstract class AbstractMetaData implements MetaData
         if (config('cache.default')) {
             return CacheManager::resolve(
                 config('cache.default')
-            )->getCache();
+            );
         }
     }
 }

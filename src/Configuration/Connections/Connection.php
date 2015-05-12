@@ -12,9 +12,4 @@ interface Connection extends Driver
      * @return array
      */
     public function configure($config = []);
-
-    /**
-     * @return array
-     */
-    public function getSettings();
 }

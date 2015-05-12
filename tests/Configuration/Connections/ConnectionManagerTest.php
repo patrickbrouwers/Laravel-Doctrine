@@ -1,7 +1,7 @@
 <?php
 
+use Brouwers\LaravelDoctrine\Configuration\Connections\AbstractConnection;
 use Brouwers\LaravelDoctrine\Configuration\Connections\ConnectionManager;
-use Brouwers\LaravelDoctrine\Configuration\Connections\CustomConnection;
 use Brouwers\LaravelDoctrine\Configuration\Connections\MysqlConnection;
 
 class ConnectionManagerTest extends PHPUnit_Framework_TestCase
@@ -31,7 +31,7 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
         ConnectionManager::extend('mysql', function ($driver) {
 
             // Should give instance of the already registered driver
-            $this->assertInstanceOf(MysqlConnection::class, $driver);
+            $this->assertTrue(is_array($driver));
 
             return [
                 'host'     => 'host',
@@ -42,10 +42,9 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
             ];
         });
 
-        $driver   = ConnectionManager::resolve('mysql');
-        $settings = $driver->getSettings();
+        $driver = ConnectionManager::resolve('mysql');
 
-        $this->assertEquals('username2', $settings['username']);
+        $this->assertEquals('username2', $driver['username']);
     }
 
     public function test_custom_connection_can_be_set()
@@ -54,31 +53,36 @@ class ConnectionManagerTest extends PHPUnit_Framework_TestCase
             return [
                 'host'     => 'host',
                 'database' => 'database',
-                'username' => 'username2',
+                'username' => 'username3',
                 'password' => 'password',
                 'charset'  => 'charset',
             ];
         });
 
         $driver = ConnectionManager::resolve('custom');
-        $this->assertInstanceOf(CustomConnection::class, $driver);
-    }
-
-    public function test_a_custom_class_can_be_returned_while_extending()
-    {
-        ConnectionManager::extend('custom2', function () {
-            return new CustomConnection();
-        });
-
-        $driver = ConnectionManager::resolve('custom2');
-        $this->assertInstanceOf(CustomConnection::class, $driver);
+        $this->assertEquals('username3', $driver['username']);
     }
 
     public function test_a_string_class_can_be_use_as_extend()
     {
-        ConnectionManager::extend('custom3', CustomConnection::class);
+        ConnectionManager::extend('custom3', StubConnection::class);
 
         $driver = ConnectionManager::resolve('custom3');
-        $this->assertInstanceOf(CustomConnection::class, $driver);
+        $this->assertContains('stub', $driver);
+    }
+}
+
+class StubConnection extends AbstractConnection
+{
+    /**
+     * @param array $config
+     *
+     * @return array
+     */
+    public function configure($config = [])
+    {
+        $this->settings = ['stub' => 'stub'];
+
+        return $this;
     }
 }

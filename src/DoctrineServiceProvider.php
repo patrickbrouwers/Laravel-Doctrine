@@ -48,8 +48,8 @@ class DoctrineServiceProvider extends ServiceProvider
         // Bind EntityManager as singleton
         $this->app->singleton('Doctrine\ORM\EntityManager', function () {
             return EntityManager::create(
-                ConnectionManager::resolve($this->app['config']['database.default'])->getSettings(),
-                MetaDataManager::resolve($this->app['config']['doctrine.meta.driver'])->getConfig()
+                ConnectionManager::resolve($this->app['config']['database.default']),
+                MetaDataManager::resolve($this->app['config']['doctrine.meta.driver'])
             );
         });
 
