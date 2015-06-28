@@ -16,6 +16,7 @@ use Brouwers\LaravelDoctrine\Console\SchemaCreateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaDropCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
+use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\Configuration;
@@ -26,7 +27,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
-
     /**
      * @var array
      */
@@ -38,6 +38,9 @@ class DoctrineServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->extendAuthManager();
+
+        // Boot the extension manager
+        $this->app->make(ExtensionManager::class)->boot();
 
         $this->publishes([
             $this->getConfigPath() => config_path('doctrine.php'),
@@ -56,6 +59,7 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->setupConnection();
         $this->setupEntityManager();
         $this->registerClassMetaDataFactory();
+        $this->registerExtensions();
         $this->registerPresenceVerifier();
         $this->registerConsoleCommands();
     }
@@ -146,6 +150,25 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->app->singleton(ClassMetadataFactory::class, function ($app) {
             return $app['em']->getMetadataFactory();
         });
+    }
+
+    /**
+     * Register doctrine extensions
+     */
+    protected function registerExtensions()
+    {
+        // Bind extension manager as singleton,
+        // so user can call it and add own extensions
+        $this->app->singleton(ExtensionManager::class, function ($app) {
+            return new ExtensionManager($this->app['em']);
+        });
+
+        // Register the extensions
+        foreach ($this->config['extensions'] as $extension) {
+            $this->app->make(ExtensionManager::class)->register(
+                $this->app->make($extension)
+            );
+        }
     }
 
     /**

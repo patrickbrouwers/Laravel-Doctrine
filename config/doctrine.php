@@ -1,7 +1,5 @@
 <?php
 
-use Doctrine\ORM\EntityRepository;
-
 return [
 
     /*
@@ -71,10 +69,18 @@ return [
     ],
     /*
     |--------------------------------------------------------------------------
+    | Doctrine Extensions
+    |--------------------------------------------------------------------------
+    */
+    'extensions'  => [
+        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class
+    ],
+    /*
+    |--------------------------------------------------------------------------
     | Default repository
     |--------------------------------------------------------------------------
     */
-    'repository'  => EntityRepository::class,
+    'repository'  => Doctrine\ORM\EntityRepository::class,
     /*
     |--------------------------------------------------------------------------
     | Enable Debugbar Doctrine query collection
