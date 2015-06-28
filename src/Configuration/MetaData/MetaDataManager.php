@@ -2,14 +2,16 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 
+use Brouwers\LaravelDoctrine\Configuration\Driver;
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
+use Brouwers\LaravelDoctrine\Configuration\Hookable;
 use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
 use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
 use Closure;
 use Doctrine\ORM\Configuration;
 
-class MetaDataManager implements Extendable
+class MetaDataManager implements Extendable, Hookable
 {
     use ExtendableTrait;
 
@@ -66,5 +68,13 @@ class MetaDataManager implements Extendable
         }
 
         throw new CouldNotExtendException('Expected an instance of MetaData or Doctrine\ORM\Configuration');
+    }
+
+    /**
+     * @param callable $callback
+     */
+    public static function resolved(Closure $callback)
+    {
+        app('events')->listen(get_class(self::getInstance()) . ':resolved', $callback);
     }
 }

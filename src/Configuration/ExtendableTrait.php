@@ -33,6 +33,8 @@ trait ExtendableTrait
     public static function resolve($name)
     {
         if ($driver = self::getInstance()->get($name)) {
+            event(get_class(self::getInstance()) . ':resolved', $driver);
+
             return $driver;
         }
 

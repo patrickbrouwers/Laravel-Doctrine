@@ -15,7 +15,10 @@ use Brouwers\LaravelDoctrine\Console\SchemaCreateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaDropCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
+use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Illuminate\Support\ServiceProvider;
 
@@ -76,8 +79,8 @@ class DoctrineServiceProvider extends ServiceProvider
             );
         });
 
-        $this->app->alias('em', 'Doctrine\ORM\EntityManager');
-        $this->app->alias('em', 'Doctrine\ORM\EntityManagerInterface');
+        $this->app->alias('em', EntityManager::class);
+        $this->app->alias('em', EntityManagerInterface::class);
     }
 
     /**
@@ -100,6 +103,23 @@ class DoctrineServiceProvider extends ServiceProvider
             $this->config['meta']['drivers'],
             $this->config['dev']
         );
+
+        MetaDataManager::resolved(function (Configuration $configuration) {
+            $configuration->setDefaultRepositoryClassName($this->config['repository']);
+            $configuration->setAutoGenerateProxyClasses($this->config['meta']['proxies']['auto_generate']);
+
+            if ($namespace = $this->config['meta']['proxies']['namespace']) {
+                $configuration->setProxyNamespace($namespace);
+            }
+
+            if ($this->config['debugbar'] === true) {
+                $debugStack = new DebugStack();
+                $configuration->setSQLLogger($debugStack);
+                $this->app['debugbar']->addCollector(
+                    new DoctrineCollector($debugStack)
+                );
+            }
+        });
     }
 
     /**
@@ -147,5 +167,19 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function getConfigPath()
     {
         return __DIR__ . '/../config/doctrine.php';
+    }
+
+    /**
+     * Get the services provided by the provider.
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'em',
+            EntityManager::class,
+            ClassMetadataFactory::class,
+            EntityManagerInterface::class
+        ];
     }
 }

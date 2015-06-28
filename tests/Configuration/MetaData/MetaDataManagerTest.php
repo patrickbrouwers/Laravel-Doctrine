@@ -63,6 +63,16 @@ function config()
     return null;
 }
 
+function event()
+{
+    return null;
+}
+
+function app()
+{
+    return null;
+}
+
 class StubMetaData extends AbstractMetaData
 {
     /**

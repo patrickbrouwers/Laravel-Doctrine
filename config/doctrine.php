@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\ORM\EntityRepository;
+
 return [
 
     /*
@@ -61,8 +63,24 @@ return [
                     'path' => storage_path('proxies/xml')
                 ]
             ]
+        ],
+        'proxies' => [
+            'auto_generate' => false,
+            'namespace'     => false
         ]
     ],
+    /*
+    |--------------------------------------------------------------------------
+    | Default repository
+    |--------------------------------------------------------------------------
+    */
+    'repository'  => EntityRepository::class,
+    /*
+    |--------------------------------------------------------------------------
+    | Enable Debugbar Doctrine query collection
+    |--------------------------------------------------------------------------
+    */
+    'debugbar'    => false,
     /*
     |--------------------------------------------------------------------------
     | Cache
