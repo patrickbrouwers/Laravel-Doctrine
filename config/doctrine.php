@@ -65,7 +65,7 @@ return [
             ]
         ],
         'proxies' => [
-            'auto_generate' => false,
+            'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false),
             'namespace'     => false
         ]
     ],
@@ -80,7 +80,7 @@ return [
     | Enable Debugbar Doctrine query collection
     |--------------------------------------------------------------------------
     */
-    'debugbar'    => false,
+    'debugbar'    => env('DOCTRINE_DEBUGBAR', false),
     /*
     |--------------------------------------------------------------------------
     | Cache
