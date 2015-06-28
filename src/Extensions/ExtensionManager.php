@@ -82,7 +82,7 @@ class ExtensionManager
      * @param string $namespace
      * @param bool   $all
      */
-    public function enableGedmoExtensions($namespace = 'App', $all = false)
+    public function enableGedmoExtensions($namespace = 'App', $all = true)
     {
         if ($all) {
             DoctrineExtensions::registerMappingIntoDriverChainORM(

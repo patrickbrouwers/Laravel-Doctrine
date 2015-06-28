@@ -12,7 +12,7 @@ trait Authenticatable
     /**
      * @ORM\Column(name="remember_token", type="string", nullable=true)
      */
-    protected $remember_token;
+    protected $rememberToken;
 
     /**
      * Get the unique identifier for the user.
@@ -54,7 +54,7 @@ trait Authenticatable
      */
     public function getRememberToken()
     {
-        return $this->remember_token;
+        return $this->rememberToken;
     }
 
     /**
@@ -66,7 +66,7 @@ trait Authenticatable
      */
     public function setRememberToken($value)
     {
-        $this->remember_token = $value;
+        $this->rememberToken = $value;
     }
 
     /**
@@ -75,6 +75,6 @@ trait Authenticatable
      */
     public function getRememberTokenName()
     {
-        return 'remember_token';
+        return 'rememberToken';
     }
 }

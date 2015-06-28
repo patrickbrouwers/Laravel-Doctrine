@@ -34,7 +34,7 @@ trait Timestamps
      */
     public function preUpdate()
     {
-        $this->updatedAt = new DateTime;
+        $this->setUpdatedAt(new DateTime);
     }
 
     /**
