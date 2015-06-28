@@ -10,7 +10,7 @@ return [
     | If set to false, caching will become active
     |
     */
-    'dev'         => config('app.debug'),
+    'dev'              => config('app.debug'),
     /*
     |--------------------------------------------------------------------------
     | Connections
@@ -19,7 +19,7 @@ return [
     | By default the Laravel default database connection is used
     |
     */
-    'connections' => [
+    'connections'      => [
         'default' => config('database.default')
     ],
     /*
@@ -30,9 +30,10 @@ return [
     | Available: annotations|yaml|xml
     |
     */
-    'meta'        => [
-        'driver'  => 'annotations',
-        'drivers' => [
+    'meta'             => [
+        'namespace' => 'App',
+        'driver'    => 'annotations',
+        'drivers'   => [
             'annotations' => [
                 'driver'  => 'annotations',
                 'simple'  => false,
@@ -62,31 +63,49 @@ return [
                 ]
             ]
         ],
-        'proxies' => [
+        'proxies'   => [
             'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false),
             'namespace'     => false
         ]
     ],
     /*
     |--------------------------------------------------------------------------
+    | Gedmo Doctrine Extensions
+    |--------------------------------------------------------------------------
+    |
+    | If you want to use the Doctrine Extensions from Gedmo,
+    | you'll have to set this setting to true.
+    |
+    */
+    'gedmo_extensions' => [
+        'enabled'      => false,
+        'all_mappings' => true
+    ],
+    /*
+    |--------------------------------------------------------------------------
     | Doctrine Extensions
     |--------------------------------------------------------------------------
+    |
+    | Enable/disable Doctrine Extensions by adding or removing them from the list
+    |
     */
-    'extensions'  => [
-        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class
+    'extensions'       => [
+        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
     ],
     /*
     |--------------------------------------------------------------------------
     | Default repository
     |--------------------------------------------------------------------------
     */
-    'repository'  => Doctrine\ORM\EntityRepository::class,
+    'repository'       => Doctrine\ORM\EntityRepository::class,
     /*
     |--------------------------------------------------------------------------
     | Enable Debugbar Doctrine query collection
     |--------------------------------------------------------------------------
     */
-    'debugbar'    => env('DOCTRINE_DEBUGBAR', false),
+    'debugbar'         => env('DOCTRINE_DEBUGBAR', false),
     /*
     |--------------------------------------------------------------------------
     | Cache
@@ -98,7 +117,7 @@ return [
     | Available: acp|array|file|memcached|redis
     |
     */
-    'cache'       => [
+    'cache'            => [
         'default' => config('cache.default')
     ]
 ];

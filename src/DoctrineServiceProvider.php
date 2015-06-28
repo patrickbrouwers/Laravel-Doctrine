@@ -16,6 +16,7 @@ use Brouwers\LaravelDoctrine\Console\SchemaCreateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaDropCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
+use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFoundException;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\DBAL\Logging\DebugStack;
@@ -160,11 +161,24 @@ class DoctrineServiceProvider extends ServiceProvider
         // Bind extension manager as singleton,
         // so user can call it and add own extensions
         $this->app->singleton(ExtensionManager::class, function ($app) {
-            return new ExtensionManager($this->app['em']);
+            $manager = new ExtensionManager($this->app['em']);
+
+            if ($this->config['gedmo_extensions']['enabled']) {
+                $manager->enableGedmoExtensions(
+                    $this->config['meta']['namespace'],
+                    $this->config['gedmo_extensions']['all_mappings']
+                );
+            }
+
+            return $manager;
         });
 
         // Register the extensions
         foreach ($this->config['extensions'] as $extension) {
+            if (!class_exists($extension)) {
+                throw new ExtensionNotFoundException("Extension {$extension} not found");
+            }
+
             $this->app->make(ExtensionManager::class)->register(
                 $this->app->make($extension)
             );
