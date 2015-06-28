@@ -6,6 +6,8 @@ use Brouwers\LaravelDoctrine\Extensions\Extension;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter;
+use Gedmo\SoftDeleteable\SoftDeleteableListener;
 
 class SoftDeleteableExtension implements Extension
 {
@@ -16,8 +18,11 @@ class SoftDeleteableExtension implements Extension
      */
     public function addSubscribers(EventManager $manager, EntityManagerInterface $em, Reader $reader)
     {
+        $subscriber = new SoftDeleteableListener();
+        $subscriber->setAnnotationReader($reader);
+
         $manager->addEventSubscriber(
-            new SoftDeletableSubscriber()
+            $subscriber
         );
     }
 
@@ -27,7 +32,7 @@ class SoftDeleteableExtension implements Extension
     public function getFilters()
     {
         return [
-            'trashed' => TrashedFilter::class
+            'soft-deleteable' => SoftDeleteableFilter::class
         ];
     }
 }

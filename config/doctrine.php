@@ -90,7 +90,7 @@ return [
     |
     */
     'extensions'       => [
-        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
     ],

@@ -11,13 +11,13 @@ trait Timestamps
      * @ORM\Column(name="created_at", type="datetime", nullable=false)
      * @var \DateTime
      */
-    protected $created_at;
+    protected $createdAt;
 
     /**
      * @ORM\Column(name="updated_at", type="datetime", nullable=false)
      * @var \DateTime
      */
-    protected $updated_at;
+    protected $updatedAt;
 
     /**
      * @ORM\PrePersist
@@ -34,7 +34,7 @@ trait Timestamps
      */
     public function preUpdate()
     {
-        $this->updated_at = new DateTime;
+        $this->updatedAt = new DateTime;
     }
 
     /**
@@ -42,15 +42,15 @@ trait Timestamps
      */
     public function getCreatedAt()
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     /**
-     * @param DateTime $created_at
+     * @param DateTime $createdAt
      */
-    public function setCreatedAt(DateTime $created_at)
+    public function setCreatedAt(DateTime $createdAt)
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
     }
 
     /**
@@ -58,14 +58,14 @@ trait Timestamps
      */
     public function getUpdatedAt()
     {
-        return $this->updated_at;
+        return $this->updatedAt;
     }
 
     /**
-     * @param DateTime $updated_at
+     * @param DateTime $updatedAt
      */
-    public function setUpdatedAt(DateTime $updated_at)
+    public function setUpdatedAt(DateTime $updatedAt)
     {
-        $this->updated_at = $updated_at;
+        $this->updatedAt = $updatedAt;
     }
 }

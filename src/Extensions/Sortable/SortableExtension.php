@@ -17,11 +17,11 @@ class SortableExtension implements Extension
      */
     public function addSubscribers(EventManager $manager, EntityManagerInterface $em, Reader $reader)
     {
-        $listener = new SortableListener();
-        $listener->setAnnotationReader(
+        $subscriber = new SortableListener();
+        $subscriber->setAnnotationReader(
             $reader
         );
-        $manager->addEventSubscriber($listener);
+        $manager->addEventSubscriber($subscriber);
     }
 
     /**

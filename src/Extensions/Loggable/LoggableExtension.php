@@ -17,11 +17,11 @@ class LoggableExtension implements Extension
      */
     public function addSubscribers(EventManager $manager, EntityManagerInterface $em, Reader $reader)
     {
-        $listener = new LoggableListener;
-        $listener->setAnnotationReader(
+        $subscriber = new LoggableListener;
+        $subscriber->setAnnotationReader(
             $reader
         );
-        $manager->addEventSubscriber($listener);
+        $manager->addEventSubscriber($subscriber);
     }
 
     /**

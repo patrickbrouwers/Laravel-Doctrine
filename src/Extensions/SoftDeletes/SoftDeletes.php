@@ -11,22 +11,22 @@ trait SoftDeletes
      * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
      * @var \DateTime
      */
-    protected $deleted_at;
+    protected $deletedAt;
 
     /**
      * @return DateTime
      */
     public function getDeletedAt()
     {
-        return $this->deleted_at;
+        return $this->deletedAt;
     }
 
     /**
-     * @param DateTime $deleted_at
+     * @param DateTime $deletedAt
      */
-    public function setDeletedAt(DateTime $deleted_at)
+    public function setDeletedAt(DateTime $deletedAt)
     {
-        $this->deleted_at = $deleted_at;
+        $this->deletedAt = $deletedAt;
     }
 
     /**
@@ -34,6 +34,6 @@ trait SoftDeletes
      */
     public function isDeleted()
     {
-        return new DateTime > $this->deleted_at;
+        return new DateTime > $this->deletedAt;
     }
 }
