@@ -2,6 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine;
 
+use Brouwers\LaravelDoctrine\Auth\DoctrineUserProvider;
 use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
 use Brouwers\LaravelDoctrine\Configuration\Connections\ConnectionManager;
 use Brouwers\LaravelDoctrine\Configuration\MetaData\MetaDataManager;
@@ -25,6 +26,7 @@ use Illuminate\Support\ServiceProvider;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
+
     /**
      * @var array
      */
@@ -35,6 +37,8 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->extendAuthManager();
+
         $this->publishes([
             $this->getConfigPath() => config_path('doctrine.php'),
         ], 'config');
@@ -169,6 +173,20 @@ class DoctrineServiceProvider extends ServiceProvider
             EnsureProductionSettingsCommand::class,
             GenerateProxiesCommand::class
         ]);
+    }
+
+    /**
+     * Extend the auth manager
+     */
+    protected function extendAuthManager()
+    {
+        $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function ($app) {
+            return new DoctrineUserProvider(
+                $app['Illuminate\Contracts\Hashing\Hasher'],
+                $app['em'],
+                $app['config']['auth.model']
+            );
+        });
     }
 
     /**

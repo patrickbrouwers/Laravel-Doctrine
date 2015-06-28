@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Auth;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Contracts\Hashing\Hasher;
 
@@ -73,7 +73,7 @@ class DoctrineUserProvider implements UserProvider
      *
      * @return void
      */
-    public function updateRememberToken(Authenticatable $user, $token)
+    public function updateRememberToken(AuthenticatableContract $user, $token)
     {
         $user->setRememberToken($token);
         $this->em->persist($user);
@@ -107,7 +107,7 @@ class DoctrineUserProvider implements UserProvider
      *
      * @return bool
      */
-    public function validateCredentials(Authenticatable $user, array $credentials)
+    public function validateCredentials(AuthenticatableContract $user, array $credentials)
     {
         return $this->hasher->check($credentials['password'], $user->getAuthPassword());
     }
