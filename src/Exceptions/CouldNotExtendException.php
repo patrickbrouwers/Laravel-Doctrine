@@ -2,6 +2,8 @@
 
 namespace Brouwers\LaravelDoctrine\Exceptions;
 
-class CouldNotExtendException extends \Exception
+use ErrorException;
+
+class CouldNotExtendException extends ErrorException
 {
 }

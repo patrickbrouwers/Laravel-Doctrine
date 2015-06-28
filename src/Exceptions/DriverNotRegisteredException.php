@@ -2,6 +2,8 @@
 
 namespace Brouwers\LaravelDoctrine\Exceptions;
 
-class DriverNotRegisteredException extends \ErrorException
+use RuntimeException;
+
+class DriverNotRegisteredException extends RuntimeException
 {
 }
