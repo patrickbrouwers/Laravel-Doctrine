@@ -15,6 +15,7 @@ use Brouwers\LaravelDoctrine\Console\SchemaCreateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaDropCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
+use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
@@ -51,6 +52,7 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->setupConnection();
         $this->setupEntityManager();
         $this->registerClassMetaDataFactory();
+        $this->registerPresenceVerifier();
         $this->registerConsoleCommands();
     }
 
@@ -140,6 +142,14 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->app->singleton(ClassMetadataFactory::class, function ($app) {
             return $app['em']->getMetadataFactory();
         });
+    }
+
+    /**
+     * Register the validation presence verifier
+     */
+    protected function registerPresenceVerifier()
+    {
+        $this->app->singleton('validation.presence', DoctrinePresenceVerifier::class);
     }
 
     /**
