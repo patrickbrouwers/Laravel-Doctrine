@@ -2,7 +2,6 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 
-use Brouwers\LaravelDoctrine\Configuration\Driver;
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
 use Brouwers\LaravelDoctrine\Configuration\Hookable;
