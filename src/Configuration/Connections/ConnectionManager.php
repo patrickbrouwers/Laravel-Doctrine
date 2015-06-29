@@ -14,9 +14,8 @@ class ConnectionManager implements Extendable
 
     /**
      * @param $drivers
-
      *
-*@throws DriverNotFound
+     * @throws DriverNotFound
      */
     public static function registerConnections(array $drivers)
     {
@@ -39,7 +38,7 @@ class ConnectionManager implements Extendable
      * @param Closure $callback
      * @param null    $class
      *
-*@throws CouldNotExtend
+     * @throws CouldNotExtend
      * @return Connection
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)

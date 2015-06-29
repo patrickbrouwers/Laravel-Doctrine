@@ -18,13 +18,13 @@ class MysqlConnection extends AbstractConnection
     {
         return new static ([
             'driver'      => 'pdo_mysql',
-            'host'        => $config['host'],
-            'dbname'      => $config['database'],
-            'user'        => $config['username'],
-            'password'    => $config['password'],
-            'charset'     => $config['charset'],
-            'port'        => @$config['port'],
-            'unix_socket' => @$config['unix_socket']
+            'host'        => array_get($config, 'host'),
+            'dbname'      => array_get($config, 'database'),
+            'user'        => array_get($config, 'username'),
+            'password'    => array_get($config, 'password'),
+            'charset'     => array_get($config, 'charset'),
+            'port'        => array_get($config, 'port'),
+            'unix_socket' => array_get($config, 'unix_socket')
         ]);
     }
 }

@@ -20,9 +20,9 @@ class Yaml extends AbstractMetaData
     public function configure(array $settings = [], $dev = false)
     {
         $this->settings = [
-            'paths'      => $settings['paths'],
             'dev'        => $dev,
-            'proxy_path' => @$settings['proxies']['path']
+            'paths'      => array_get($settings, 'paths', []),
+            'proxy_path' => array_get($settings, 'proxies.path'),
         ];
 
         return $this;
@@ -34,9 +34,9 @@ class Yaml extends AbstractMetaData
     public function resolve()
     {
         return Setup::createYAMLMetadataConfiguration(
-            $this->settings['paths'],
-            $this->settings['dev'],
-            $this->settings['proxy_path'],
+            array_get($this->settings, 'paths'),
+            array_get($this->settings, 'dev'),
+            array_get($this->settings, 'proxy_path'),
             $this->getCache()
         );
     }

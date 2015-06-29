@@ -18,7 +18,7 @@ class MetaDataManager implements Extendable, Hookable
      * @param array $drivers
      * @param bool  $dev
      *
-*@throws DriverNotFound
+     * @throws DriverNotFound
      * @return mixed|void
      */
     public static function registerDrivers(array $drivers = [], $dev = false)
@@ -42,7 +42,7 @@ class MetaDataManager implements Extendable, Hookable
      * @param Closure $callback
      * @param null    $class
      *
-*@throws CouldNotExtend
+     * @throws CouldNotExtend
      * @return MetaData
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)

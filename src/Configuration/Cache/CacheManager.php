@@ -22,7 +22,7 @@ class CacheManager implements Extendable
     /**
      * @param array $drivers
      *
-*@throws DriverNotFound
+     * @throws DriverNotFound
      */
     public static function registerDrivers(array $drivers = [])
     {
@@ -47,7 +47,7 @@ class CacheManager implements Extendable
      * @param callable $callback
      * @param null     $class
      *
-*@throws CouldNotExtend
+     * @throws CouldNotExtend
      * @return CustomCacheProvider
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)

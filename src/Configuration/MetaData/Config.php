@@ -21,9 +21,9 @@ class Config extends AbstractMetaData
     public function configure(array $settings = [], $dev = false)
     {
         $this->settings = [
-            'mapping_file' => $settings['mapping_file'],
             'dev'          => $dev,
-            'proxy_path'   => @$settings['proxies']['path']
+            'proxy_path'   => array_get($settings, 'proxies.path'),
+            'mapping_file' => array_get($settings, 'mapping_file')
         ];
 
         return $this;
@@ -35,14 +35,14 @@ class Config extends AbstractMetaData
     public function resolve()
     {
         $configuration = Setup::createConfiguration(
-            $this->settings['dev'],
-            $this->settings['proxy_path'],
+            array_get($this->settings, 'dev'),
+            array_get($this->settings, 'proxy_path'),
             $this->getCache()
         );
 
         $configuration->setMetadataDriverImpl(
             new ConfigDriver(
-                config($this->settings['mapping_file'], [])
+                config(array_get($this->settings, 'mapping_file'), [])
             )
         );
 

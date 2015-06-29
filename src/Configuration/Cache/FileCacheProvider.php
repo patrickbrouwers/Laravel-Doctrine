@@ -14,7 +14,7 @@ class FileCacheProvider extends AbstractCacheProvider
     /**
      * @param array $config
      *
-     * @throws DriverNotFoundException
+     * @throws DriverNotFound
      * @return array
      */
     public function configure($config = [])

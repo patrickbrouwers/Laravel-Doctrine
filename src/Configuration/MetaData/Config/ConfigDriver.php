@@ -53,8 +53,6 @@ class ConfigDriver extends YamlDriver implements MappingDriver
      */
     public function getElement($className)
     {
-        if ($this->isTransient($className)) {
-            return $this->mappings[$className];
-        }
+        return array_get($this->mappings, $className);
     }
 }

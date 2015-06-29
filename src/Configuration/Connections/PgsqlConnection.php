@@ -18,13 +18,13 @@ class PgsqlConnection extends AbstractConnection
     {
         return new static ([
             'driver'   => 'pdo_pgsql',
-            'host'     => $config['host'],
-            'dbname'   => $config['database'],
-            'user'     => $config['username'],
-            'password' => $config['password'],
-            'charset'  => $config['charset'],
-            'port'     => @$config['port'],
-            'sslmode'  => @$config['sslmode']
+            'host'     => array_get($config, 'host'),
+            'dbname'   => array_get($config, 'database'),
+            'user'     => array_get($config, 'username'),
+            'password' => array_get($config, 'password'),
+            'charset'  => array_get($config, 'charset'),
+            'port'     => array_get($config, 'port'),
+            'sslmode'  => array_get($config, 'sslmode')
         ]);
     }
 }

@@ -20,10 +20,10 @@ class Annotations extends AbstractMetaData
     public function configure(array $settings = [], $dev = false)
     {
         $this->settings = [
-            'paths'      => $settings['paths'],
             'dev'        => $dev,
-            'proxy_path' => @$settings['proxies']['path'],
-            'simple'     => isset($settings['simple']) ? $settings['simple'] : false
+            'paths'      => array_get($settings, 'paths', []),
+            'proxy_path' => array_get($settings, 'proxies.path'),
+            'simple'     => array_get($settings, 'simple', false)
         ];
 
         return $this;
@@ -35,11 +35,11 @@ class Annotations extends AbstractMetaData
     public function resolve()
     {
         return Setup::createAnnotationMetadataConfiguration(
-            $this->settings['paths'],
-            $this->settings['dev'],
-            $this->settings['proxy_path'],
+            array_get($this->settings, 'paths'),
+            array_get($this->settings, 'dev'),
+            array_get($this->settings, 'proxy_path'),
             $this->getCache(),
-            $this->settings['simple']
+            array_get($this->settings, 'simple')
         );
     }
 }

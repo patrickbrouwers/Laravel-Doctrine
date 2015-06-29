@@ -18,8 +18,8 @@ class SqliteConnection extends AbstractConnection
     {
         return new static ([
             'driver'   => 'pdo_sqlite',
-            'user'     => @$config['username'],
-            'password' => @$config['password'],
+            'user'     => array_get($config, 'username'),
+            'password' => array_get($config, 'password'),
             'memory'   => $config['database'] == ':memory' ? true : false,
             'path'     => $config['database'] == ':memory' ? null : $config['database']
         ]);
