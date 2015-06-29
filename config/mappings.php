@@ -3,15 +3,17 @@
 return [
 
     'App\User' => [
+        'type'   => 'entity',
         'table'  => 'users',
-        'fields' => [
-            'id'   => [
+        'id'     => [
+            'id' => [
                 'type'     => 'integer',
                 'strategy' => 'identity'
             ],
+        ],
+        'fields' => [
             'name' => [
-                'type'     => 'string',
-                'nullable' => false,
+                'type' => 'string'
             ]
         ]
     ]

@@ -33,7 +33,7 @@ return [
     */
     'meta'                      => [
         'namespace' => 'App',
-        'driver'    => 'config',
+        'driver'    => 'annotations',
         'drivers'   => [
             'annotations' => [
                 'driver'  => 'annotations',
@@ -68,6 +68,15 @@ return [
                 'mapping_file' => 'mappings',
                 'proxies'      => [
                     'path' => storage_path('proxies/config')
+                ]
+            ],
+            'static_php'      => [
+                'driver'  => 'static_php',
+                'paths'   => [
+                    app_path()
+                ],
+                'proxies' => [
+                    'path' => storage_path('proxies/static')
                 ]
             ]
         ],

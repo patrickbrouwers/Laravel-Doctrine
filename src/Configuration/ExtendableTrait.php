@@ -26,9 +26,8 @@ trait ExtendableTrait
 
     /**
      * @param $name
-
      *
-*@throws DriverNotRegistered
+     * @throws DriverNotRegistered
      * @return mixed
      */
     public static function resolve($name)
