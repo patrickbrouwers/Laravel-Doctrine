@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait SoftDeletes
 {
-
     /**
      * @ORM\Column(name="deleted_at", type="CarbonDateTime", nullable=true)
      * @var Carbon

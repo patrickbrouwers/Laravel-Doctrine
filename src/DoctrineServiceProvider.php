@@ -20,12 +20,12 @@ use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFoundException;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Illuminate\Support\ServiceProvider;
-use Doctrine\DBAL\Types\Type;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
@@ -196,9 +196,8 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function registerCustomTypes()
     {
-        foreach($this->config['custom_types'] as $name => $class)
-        {
-            if(!Type::hasType($name)) {
+        foreach ($this->config['custom_types'] as $name => $class) {
+            if (!Type::hasType($name)) {
                 Type::addType($name, $class);
             } else {
                 Type::overrideType($name, $class);

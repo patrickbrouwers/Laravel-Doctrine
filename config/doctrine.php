@@ -1,7 +1,5 @@
 <?php
 
-use DoctrineExtensions\Query\Mysql\DateDiff;
-
 return [
 
     /*
@@ -104,6 +102,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'custom_types'              => [
+        'json'             => Brouwers\LaravelDoctrine\Types\Json::class,
         'CarbonDate'       => DoctrineExtensions\Types\CarbonDateType::class,
         'CarbonDateTime'   => DoctrineExtensions\Types\CarbonDateTimeType::class,
         'CarbonDateTimeTz' => DoctrineExtensions\Types\CarbonDateTimeTzType::class,
