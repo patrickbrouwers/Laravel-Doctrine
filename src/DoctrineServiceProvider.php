@@ -25,6 +25,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Illuminate\Support\ServiceProvider;
+use Doctrine\DBAL\Types\Type;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,7 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->setupEntityManager();
         $this->registerClassMetaDataFactory();
         $this->registerExtensions();
+        $this->registerCustomTypes();
         $this->registerPresenceVerifier();
         $this->registerConsoleCommands();
     }
@@ -130,6 +132,10 @@ class DoctrineServiceProvider extends ServiceProvider
                     new DoctrineCollector($debugStack)
                 );
             }
+
+            $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
+            $configuration->setCustomNumericFunctions($this->config['custom_numeric_functions']);
+            $configuration->setCustomStringFunctions($this->config['custom_string_functions']);
         });
     }
 
@@ -182,6 +188,21 @@ class DoctrineServiceProvider extends ServiceProvider
             $this->app->make(ExtensionManager::class)->register(
                 $this->app->make($extension)
             );
+        }
+    }
+
+    /**
+     * @throws \Doctrine\DBAL\DBALException
+     */
+    protected function registerCustomTypes()
+    {
+        foreach($this->config['custom_types'] as $name => $class)
+        {
+            if(!Type::hasType($name)) {
+                Type::addType($name, $class);
+            } else {
+                Type::overrideType($name, $class);
+            }
         }
     }
 
