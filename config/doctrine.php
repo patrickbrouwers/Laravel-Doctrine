@@ -20,7 +20,8 @@ return [
     |
     */
     'connections'      => [
-        'default' => config('database.default')
+        'default' => config('database.default'),
+        'prefix'  => ''
     ],
     /*
     |--------------------------------------------------------------------------
@@ -90,6 +91,7 @@ return [
     |
     */
     'extensions'       => [
+        //Brouwers\LaravelDoctrine\Extensions\TablePrefix\TablePrefixExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
