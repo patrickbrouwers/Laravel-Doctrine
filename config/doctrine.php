@@ -12,7 +12,7 @@ return [
     | If set to false, caching will become active
     |
     */
-    'dev'              => config('app.debug'),
+    'dev'                       => config('app.debug'),
     /*
     |--------------------------------------------------------------------------
     | Connections
@@ -21,7 +21,7 @@ return [
     | By default the Laravel default database connection is used
     |
     */
-    'connections'      => [
+    'connections'               => [
         'default' => config('database.default'),
         'prefix'  => ''
     ],
@@ -33,7 +33,7 @@ return [
     | Available: annotations|yaml|xml
     |
     */
-    'meta'             => [
+    'meta'                      => [
         'namespace' => 'App',
         'driver'    => 'annotations',
         'drivers'   => [
@@ -80,7 +80,7 @@ return [
     | you'll have to set this setting to true.
     |
     */
-    'gedmo_extensions' => [
+    'gedmo_extensions'          => [
         'enabled'      => false,
         'all_mappings' => true
     ],
@@ -92,7 +92,7 @@ return [
     | Enable/disable Doctrine Extensions by adding or removing them from the list
     |
     */
-    'extensions'       => [
+    'extensions'                => [
         //Brouwers\LaravelDoctrine\Extensions\TablePrefix\TablePrefixExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
@@ -103,8 +103,11 @@ return [
     | Doctrine custom types
     |--------------------------------------------------------------------------
     */
-    'custom_types'     => [
-
+    'custom_types'              => [
+        'CarbonDate'       => DoctrineExtensions\Types\CarbonDateType::class,
+        'CarbonDateTime'   => DoctrineExtensions\Types\CarbonDateTimeType::class,
+        'CarbonDateTimeTz' => DoctrineExtensions\Types\CarbonDateTimeTzType::class,
+        'CarbonTime'       => DoctrineExtensions\Types\CarbonTimeType::class
     ],
     /*
     |--------------------------------------------------------------------------
@@ -120,7 +123,7 @@ return [
     | Doctrine custom numeric functions
     |--------------------------------------------------------------------------
     */
-    'custom_numeric_functions' => [
+    'custom_numeric_functions'  => [
         //'ACOS'    => DoctrineExtensions\Query\Mysql\Acos::class,
         //'ASIN'    => DoctrineExtensions\Query\Mysql\Asin::class,
         //'ATAN'    => DoctrineExtensions\Query\Mysql\Atan::class,
@@ -132,13 +135,12 @@ return [
         //'SIN'     => DoctrineExtensions\Query\Mysql\Sin::class,
         //'TAN'     => DoctrineExtensions\Query\Mysql\Ta::class
     ],
-
     /*
     |--------------------------------------------------------------------------
     | Doctrine custom string functions
     |--------------------------------------------------------------------------
     */
-    'custom_string_functions' => [
+    'custom_string_functions'   => [
         //'CHAR_LENGTH' => DoctrineExtensions\Query\Mysql\CharLength::class,
         //'CONCAT_WS'   => DoctrineExtensions\Query\Mysql\ConcatWs::class,
         //'FIELD'       => DoctrineExtensions\Query\Mysql\Field::class,
@@ -152,13 +154,13 @@ return [
     | Default repository
     |--------------------------------------------------------------------------
     */
-    'repository'       => Doctrine\ORM\EntityRepository::class,
+    'repository'                => Doctrine\ORM\EntityRepository::class,
     /*
     |--------------------------------------------------------------------------
     | Enable Debugbar Doctrine query collection
     |--------------------------------------------------------------------------
     */
-    'debugbar'         => env('DOCTRINE_DEBUGBAR', false),
+    'debugbar'                  => env('DOCTRINE_DEBUGBAR', false),
     /*
     |--------------------------------------------------------------------------
     | Cache
@@ -170,7 +172,7 @@ return [
     | Available: acp|array|file|memcached|redis
     |
     */
-    'cache'            => [
+    'cache'                     => [
         'default' => config('cache.default')
     ]
 ];

@@ -2,20 +2,20 @@
 
 namespace Brouwers\LaravelDoctrine\Extensions\Timestamps;
 
-use DateTime;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 trait Timestamps
 {
     /**
-     * @ORM\Column(name="created_at", type="datetime", nullable=false)
-     * @var \DateTime
+     * @ORM\Column(name="created_at", type="CarbonDateTime", nullable=false)
+     * @var Carbon
      */
     protected $createdAt;
 
     /**
-     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
-     * @var \DateTime
+     * @ORM\Column(name="updated_at", type="CarbonDateTime", nullable=false)
+     * @var Carbon
      */
     protected $updatedAt;
 
@@ -24,7 +24,7 @@ trait Timestamps
      */
     public function prePersist()
     {
-        $now = new Datetime;
+        $now = Carbon::now();
         $this->setCreatedAt($now);
         $this->setUpdatedAt($now);
     }
@@ -34,11 +34,11 @@ trait Timestamps
      */
     public function preUpdate()
     {
-        $this->setUpdatedAt(new DateTime);
+        $this->setUpdatedAt(Carbon::now());
     }
 
     /**
-     * @return DateTime
+     * @return Carbon
      */
     public function getCreatedAt()
     {
@@ -46,15 +46,15 @@ trait Timestamps
     }
 
     /**
-     * @param DateTime $createdAt
+     * @param Carbon $createdAt
      */
-    public function setCreatedAt(DateTime $createdAt)
+    public function setCreatedAt(Carbon $createdAt)
     {
         $this->createdAt = $createdAt;
     }
 
     /**
-     * @return DateTime
+     * @return Carbon
      */
     public function getUpdatedAt()
     {
@@ -62,9 +62,9 @@ trait Timestamps
     }
 
     /**
-     * @param DateTime $updatedAt
+     * @param Carbon $updatedAt
      */
-    public function setUpdatedAt(DateTime $updatedAt)
+    public function setUpdatedAt(Carbon $updatedAt)
     {
         $this->updatedAt = $updatedAt;
     }

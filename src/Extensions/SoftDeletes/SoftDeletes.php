@@ -2,19 +2,20 @@
 
 namespace Brouwers\LaravelDoctrine\Extensions\SoftDeletes;
 
-use DateTime;
+use Carbon\Carbon;
 use Doctrine\ORM\Mapping as ORM;
 
 trait SoftDeletes
 {
+
     /**
-     * @ORM\Column(name="deleted_at", type="datetime", nullable=true)
-     * @var \DateTime
+     * @ORM\Column(name="deleted_at", type="CarbonDateTime", nullable=true)
+     * @var Carbon
      */
     protected $deletedAt;
 
     /**
-     * @return DateTime
+     * @return Carbon
      */
     public function getDeletedAt()
     {
@@ -22,9 +23,9 @@ trait SoftDeletes
     }
 
     /**
-     * @param DateTime $deletedAt
+     * @param Carbon $deletedAt
      */
-    public function setDeletedAt(DateTime $deletedAt)
+    public function setDeletedAt(Carbon $deletedAt)
     {
         $this->deletedAt = $deletedAt;
     }
@@ -34,6 +35,6 @@ trait SoftDeletes
      */
     public function isDeleted()
     {
-        return new DateTime > $this->deletedAt;
+        return Carbon::now() > $this->deletedAt;
     }
 }
