@@ -4,8 +4,8 @@ namespace Brouwers\LaravelDoctrine\Configuration\Connections;
 
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
-use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtend;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFound;
 use Closure;
 
 class ConnectionManager implements Extendable
@@ -14,8 +14,9 @@ class ConnectionManager implements Extendable
 
     /**
      * @param $drivers
+
      *
-     * @throws DriverNotFoundException
+*@throws DriverNotFound
      */
     public static function registerConnections(array $drivers)
     {
@@ -28,7 +29,7 @@ class ConnectionManager implements Extendable
                 $driver = (new $class())->configure($driver);
                 $manager->register($driver);
             } else {
-                throw new DriverNotFoundException("Connection {$name} is not supported");
+                throw new DriverNotFound("Connection {$name} is not supported");
             }
         }
     }
@@ -38,7 +39,7 @@ class ConnectionManager implements Extendable
      * @param Closure $callback
      * @param null    $class
      *
-     * @throws CouldNotExtendException
+*@throws CouldNotExtend
      * @return Connection
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)
@@ -60,6 +61,6 @@ class ConnectionManager implements Extendable
             }
         }
 
-        throw new CouldNotExtendException('Expected an instance of Connection or Doctrine\ORM\Configuration');
+        throw new CouldNotExtend('Expected an instance of Connection or Doctrine\ORM\Configuration');
     }
 }

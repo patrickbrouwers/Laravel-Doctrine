@@ -4,6 +4,6 @@ namespace Brouwers\LaravelDoctrine\Exceptions;
 
 use LogicException;
 
-class DriverNotFoundException extends LogicException
+class ExtensionNotFound extends LogicException
 {
 }

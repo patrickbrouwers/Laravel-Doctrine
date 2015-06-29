@@ -4,8 +4,8 @@ namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
-use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtend;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFound;
 use Closure;
 
 class CacheManager implements Extendable
@@ -22,7 +22,7 @@ class CacheManager implements Extendable
     /**
      * @param array $drivers
      *
-     * @throws DriverNotFoundException
+*@throws DriverNotFound
      */
     public static function registerDrivers(array $drivers = [])
     {
@@ -36,7 +36,7 @@ class CacheManager implements Extendable
                     $driver = (new $class())->configure($driver);
                     $manager->register($driver);
                 } else {
-                    throw new DriverNotFoundException("Cache driver {$name} is not supported");
+                    throw new DriverNotFound("Cache driver {$name} is not supported");
                 }
             }
         }
@@ -47,7 +47,7 @@ class CacheManager implements Extendable
      * @param callable $callback
      * @param null     $class
      *
-     * @throws CouldNotExtendException
+*@throws CouldNotExtend
      * @return CustomCacheProvider
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)
@@ -69,6 +69,6 @@ class CacheManager implements Extendable
             }
         }
 
-        throw new CouldNotExtendException('Expected an instance of Cache or Doctrine\Common\Cache');
+        throw new CouldNotExtend('Expected an instance of Cache or Doctrine\Common\Cache');
     }
 }

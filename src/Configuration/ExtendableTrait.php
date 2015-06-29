@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration;
 
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotRegisteredException;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotRegistered;
 
 trait ExtendableTrait
 {
@@ -26,8 +26,9 @@ trait ExtendableTrait
 
     /**
      * @param $name
+
      *
-     * @throws DriverNotRegisteredException
+*@throws DriverNotRegistered
      * @return mixed
      */
     public static function resolve($name)
@@ -38,7 +39,7 @@ trait ExtendableTrait
             return $driver;
         }
 
-        throw new DriverNotRegisteredException("Driver {$name} not registered");
+        throw new DriverNotRegistered("Driver {$name} not registered");
     }
 
     /**

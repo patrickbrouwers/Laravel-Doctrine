@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFound;
 use Doctrine\Common\Cache\RedisCache;
 use Redis;
 
@@ -16,7 +16,7 @@ class RedisCacheProvider extends AbstractCacheProvider
     /**
      * @param array $config
      *
-     * @throws DriverNotFoundException
+*@throws DriverNotFound
      * @return array
      */
     public function configure($config = [])
@@ -33,7 +33,7 @@ class RedisCacheProvider extends AbstractCacheProvider
     }
 
     /**
-     * @throws DriverNotFoundException
+     * @throws DriverNotFound
      * @return mixed
      */
     public function resolve()
@@ -49,6 +49,6 @@ class RedisCacheProvider extends AbstractCacheProvider
             return $cache;
         }
 
-        throw new DriverNotFoundException('Redis extension was not found');
+        throw new DriverNotFound('Redis extension was not found');
     }
 }

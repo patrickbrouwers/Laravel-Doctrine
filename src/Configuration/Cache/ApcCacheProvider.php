@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFound;
 use Doctrine\Common\Cache\ApcCache;
 
 class ApcCacheProvider extends AbstractCacheProvider
@@ -15,7 +15,7 @@ class ApcCacheProvider extends AbstractCacheProvider
     /**
      * @param array $config
      *
-     * @throws DriverNotFoundException
+*@throws DriverNotFound
      * @return array
      */
     public function configure($config = [])
@@ -24,7 +24,7 @@ class ApcCacheProvider extends AbstractCacheProvider
     }
 
     /**
-     * @throws DriverNotFoundException
+     * @throws DriverNotFound
      * @return ApcCache
      */
     public function resolve()
@@ -33,6 +33,6 @@ class ApcCacheProvider extends AbstractCacheProvider
             return new ApcCache();
         }
 
-        throw new DriverNotFoundException('Apc extension not loaded');
+        throw new DriverNotFound('Apc extension not loaded');
     }
 }

@@ -5,8 +5,8 @@ namespace Brouwers\LaravelDoctrine\Configuration\MetaData;
 use Brouwers\LaravelDoctrine\Configuration\Extendable;
 use Brouwers\LaravelDoctrine\Configuration\ExtendableTrait;
 use Brouwers\LaravelDoctrine\Configuration\Hookable;
-use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtendException;
-use Brouwers\LaravelDoctrine\Exceptions\DriverNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\CouldNotExtend;
+use Brouwers\LaravelDoctrine\Exceptions\DriverNotFound;
 use Closure;
 use Doctrine\ORM\Configuration;
 
@@ -18,7 +18,7 @@ class MetaDataManager implements Extendable, Hookable
      * @param array $drivers
      * @param bool  $dev
      *
-     * @throws DriverNotFoundException
+*@throws DriverNotFound
      * @return mixed|void
      */
     public static function registerDrivers(array $drivers = [], $dev = false)
@@ -32,7 +32,7 @@ class MetaDataManager implements Extendable, Hookable
                 $driver = (new $class())->configure($driver, $dev);
                 $manager->register($driver);
             } else {
-                throw new DriverNotFoundException("Driver {$name} is not supported");
+                throw new DriverNotFound("Driver {$name} is not supported");
             }
         }
     }
@@ -42,7 +42,7 @@ class MetaDataManager implements Extendable, Hookable
      * @param Closure $callback
      * @param null    $class
      *
-     * @throws CouldNotExtendException
+*@throws CouldNotExtend
      * @return MetaData
      */
     public function transformToDriver($driver, Closure $callback = null, $class = null)
@@ -66,7 +66,7 @@ class MetaDataManager implements Extendable, Hookable
             }
         }
 
-        throw new CouldNotExtendException('Expected an instance of MetaData or Doctrine\ORM\Configuration');
+        throw new CouldNotExtend('Expected an instance of MetaData or Doctrine\ORM\Configuration');
     }
 
     /**

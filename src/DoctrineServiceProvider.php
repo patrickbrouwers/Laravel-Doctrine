@@ -16,7 +16,7 @@ use Brouwers\LaravelDoctrine\Console\SchemaCreateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaDropCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
-use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFoundException;
+use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFound;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\DBAL\Logging\DebugStack;
@@ -182,7 +182,7 @@ class DoctrineServiceProvider extends ServiceProvider
         // Register the extensions
         foreach ($this->config['extensions'] as $extension) {
             if (!class_exists($extension)) {
-                throw new ExtensionNotFoundException("Extension {$extension} not found");
+                throw new ExtensionNotFound("Extension {$extension} not found");
             }
 
             $this->app->make(ExtensionManager::class)->register(
