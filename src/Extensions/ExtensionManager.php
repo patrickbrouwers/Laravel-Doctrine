@@ -2,6 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Extensions;
 
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\DoctrineExtensions;
@@ -34,6 +35,11 @@ class ExtensionManager
     protected $metadata;
 
     /**
+     * @var Reader|bool
+     */
+    protected $reader;
+
+    /**
      * @param EntityManagerInterface $em
      */
     public function __construct(EntityManagerInterface $em)
@@ -42,7 +48,9 @@ class ExtensionManager
         $this->evm      = $em->getEventManager();
         $this->chain    = new MappingDriverChain();
         $this->metadata = $em->getConfiguration();
-        $this->reader   = $this->metadata->getMetadataDriverImpl()->getReader();
+        $this->reader   = method_exists($this->metadata->getMetadataDriverImpl(), 'getReader')
+            ? $this->metadata->getMetadataDriverImpl()->getReader()
+            : false;
     }
 
     /**
