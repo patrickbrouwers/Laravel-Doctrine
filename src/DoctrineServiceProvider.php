@@ -19,6 +19,8 @@ use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
 use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFound;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Configuration;
@@ -59,7 +61,8 @@ class DoctrineServiceProvider extends ServiceProvider
         $this->mergeConfig();
         $this->setupMetaData();
         $this->setupConnection();
-        $this->setupEntityManager();
+        $this->registerManagerRegistry();
+        $this->registerEntityManager();
         $this->registerClassMetaDataFactory();
         $this->registerExtensions();
         $this->registerCustomTypes();
@@ -80,20 +83,101 @@ class DoctrineServiceProvider extends ServiceProvider
     }
 
     /**
+     * Setup the entity managers
+     * @return array
+     */
+    protected function setUpEntityManagers()
+    {
+        $managers    = [];
+        $connections = [];
+
+        foreach ($this->config['managers'] as $manager => $settings) {
+            $managerName    = IlluminateRegistry::getManagerNamePrefix() . $manager;
+            $connectionName = IlluminateRegistry::getConnectionNamePrefix() . $manager;
+
+            // Bind manager
+            $this->app->singleton($managerName, function () use ($settings) {
+
+                $manager = EntityManager::create(
+                    ConnectionManager::resolve(array_get($settings, 'connection')),
+                    MetaDataManager::resolve(array_get($settings, 'meta'))
+                );
+
+                $configuration = $manager->getConfiguration();
+
+                // Paths
+                $configuration->getMetadataDriverImpl()->addPaths(
+                    array_get($settings, 'paths', [])
+                );
+
+                // Repository
+                $configuration->setDefaultRepositoryClassName(
+                    array_get($settings, 'repository', \Doctrine\ORM\EntityRepository::class)
+                );
+
+                // Proxies
+                $configuration->setProxyDir(
+                    array_get($settings, 'proxies.path', storage_path('proxies'))
+                );
+
+                $configuration->setAutoGenerateProxyClasses(
+                    array_get($settings, 'proxies.auto_generate', false)
+                );
+
+                if ($namespace = array_get($settings, 'proxies.namespace', false)) {
+                    $configuration->setProxyNamespace($namespace);
+                }
+
+                return $manager;
+            });
+
+            // Bind connection
+            $this->app->singleton($connectionName, function ($app) use ($manager) {
+                $app->make(IlluminateRegistry::getManagerNamePrefix() . $manager)->getConnection();
+            });
+
+            $managers[$manager]    = $manager;
+            $connections[$manager] = $manager;
+        }
+
+        return [$managers, $connections];
+    }
+
+    /**
      * Setup the entity manager
      */
-    protected function setupEntityManager()
+    protected function registerEntityManager()
     {
-        // Bind EntityManager as singleton
-        $this->app->singleton('em', function () {
-            return EntityManager::create(
-                ConnectionManager::resolve($this->config['connections']['default']),
-                MetaDataManager::resolve($this->config['meta']['driver'])
-            );
+        // Bind the default Entity Manager
+        $this->app->singleton('em', function ($app) {
+            return $app->make(ManagerRegistry::class)->getManager();
         });
 
         $this->app->alias('em', EntityManager::class);
         $this->app->alias('em', EntityManagerInterface::class);
+    }
+
+    /**
+     * Register the manager registry
+     */
+    protected function registerManagerRegistry()
+    {
+        $this->app->singleton(IlluminateRegistry::class, function ($app) {
+
+            list($managers, $connections) = $this->setUpEntityManagers();
+
+            return new IlluminateRegistry(
+                head($managers),
+                $connections,
+                $managers,
+                head($connections),
+                head($managers),
+                Proxy::class,
+                $app
+            );
+        });
+
+        $this->app->alias(IlluminateRegistry::class, ManagerRegistry::class);
     }
 
     /**
@@ -118,13 +202,8 @@ class DoctrineServiceProvider extends ServiceProvider
         );
 
         MetaDataManager::resolved(function (Configuration $configuration) {
-            $configuration->setDefaultRepositoryClassName($this->config['repository']);
-            $configuration->setAutoGenerateProxyClasses($this->config['meta']['proxies']['auto_generate']);
 
-            if ($namespace = $this->config['meta']['proxies']['namespace']) {
-                $configuration->setProxyNamespace($namespace);
-            }
-
+            // Debugbar
             if ($this->config['debugbar'] === true) {
                 $debugStack = new DebugStack();
                 $configuration->setSQLLogger($debugStack);
@@ -133,6 +212,7 @@ class DoctrineServiceProvider extends ServiceProvider
                 );
             }
 
+            // Custom functions
             $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
             $configuration->setCustomNumericFunctions($this->config['custom_numeric_functions']);
             $configuration->setCustomStringFunctions($this->config['custom_string_functions']);
@@ -167,7 +247,7 @@ class DoctrineServiceProvider extends ServiceProvider
         // Bind extension manager as singleton,
         // so user can call it and add own extensions
         $this->app->singleton(ExtensionManager::class, function ($app) {
-            $manager = new ExtensionManager($this->app['em']);
+            $manager = new ExtensionManager($this->app[ManagerRegistry::class]);
 
             if ($this->config['gedmo_extensions']['enabled']) {
                 $manager->enableGedmoExtensions(

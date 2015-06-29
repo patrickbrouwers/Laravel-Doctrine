@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Console;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\SchemaValidator;
 
 class SchemaValidateCommand extends Command
@@ -13,7 +13,8 @@ class SchemaValidateCommand extends Command
      */
     protected $signature = 'doctrine:schema:validate
     {--skip-mapping : Skip the mapping validation check}
-    {--skip-sync : Skip checking if the mapping is in sync with the database}';
+    {--skip-sync : Skip checking if the mapping is in sync with the database}
+    {--em= : Validate schema for a specific entity manager }';
 
     /**
      * The console command description.
@@ -22,23 +23,19 @@ class SchemaValidateCommand extends Command
     protected $description = 'Validate the mapping files.';
 
     /**
-     * @var EntityManagerInterface
+     * @var ManagerRegistry
      */
-    protected $em;
+    private $registry;
 
     /**
-     * @var SchemaValidator
+     * @param ManagerRegistry $registry
+     *
+     * @internal param EntityManagerInterface $em
      */
-    protected $validator;
-
-    /**
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
-        $this->em        = $em;
-        $this->validator = new SchemaValidator($this->em);
+        $this->registry = $registry;
     }
 
     /**
@@ -47,27 +44,37 @@ class SchemaValidateCommand extends Command
      */
     public function fire()
     {
-        if ($this->option('skip-mapping')) {
-            $this->comment('Mapping]  Skipped mapping check.');
-        } elseif ($errors = $this->validator->validateMapping()) {
-            foreach ($errors as $className => $errorMessages) {
-                $this->error("[Mapping]  FAIL - The entity-class '" . $className . "' mapping is invalid:");
-                $this->comment('');
+        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
 
-                foreach ($errorMessages as $errorMessage) {
-                    $this->message('* ' . $errorMessage, 'red');
+        foreach ($names as $name) {
+            $em        = $this->registry->getManager($name);
+            $validator = new SchemaValidator($em);
+
+            $this->comment('');
+            $this->message('Validating for <info>' . $name . '</info> entity manager...');
+
+            if ($this->option('skip-mapping')) {
+                $this->comment('Mapping]  Skipped mapping check.');
+            } elseif ($errors = $validator->validateMapping()) {
+                foreach ($errors as $className => $errorMessages) {
+                    $this->error("[Mapping]  FAIL - The entity-class '" . $className . "' mapping is invalid:");
+                    $this->comment('');
+
+                    foreach ($errorMessages as $errorMessage) {
+                        $this->message('* ' . $errorMessage, 'red');
+                    }
                 }
+            } else {
+                $this->info('[Mapping]  OK - The mapping files are correct.');
             }
-        } else {
-            $this->info('[Mapping]  OK - The mapping files are correct.');
-        }
 
-        if ($this->option('skip-sync')) {
-            $this->comment('Database] SKIPPED - The database was not checked for synchronicity.');
-        } elseif (!$this->validator->schemaInSyncWithMetadata()) {
-            $this->error('[Database] FAIL - The database schema is not in sync with the current mapping file.');
-        } else {
-            $this->info('[Database] OK - The database schema is in sync with the mapping files.');
+            if ($this->option('skip-sync')) {
+                $this->comment('Database] SKIPPED - The database was not checked for synchronicity.');
+            } elseif (!$validator->schemaInSyncWithMetadata()) {
+                $this->error('[Database] FAIL - The database schema is not in sync with the current mapping file.');
+            } else {
+                $this->info('[Database] OK - The database schema is in sync with the mapping files.');
+            }
         }
     }
 }

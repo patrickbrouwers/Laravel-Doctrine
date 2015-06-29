@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Console;
 
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\SchemaTool;
 
 class SchemaDropCommand extends Command
@@ -14,7 +14,8 @@ class SchemaDropCommand extends Command
     protected $signature = 'doctrine:schema:drop
     {--sql : Instead of trying to apply generated SQLs into EntityManager Storage Connection, output them.}
     {--force : Don\'t ask for the deletion of the database, but force the operation to run.}
-    {--full : Instead of using the Class Metadata to detect the database table schema, drop ALL assets that the database contains. }';
+    {--full : Instead of using the Class Metadata to detect the database table schema, drop ALL assets that the database contains. }
+    {--em= : Drop schema for a specific entity manager }';
 
     /**
      * The console command description.
@@ -23,24 +24,19 @@ class SchemaDropCommand extends Command
     protected $description = 'Drop the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output.';
 
     /**
-     * @var \Doctrine\ORM\Tools\SchemaTool
+     * @var ManagerRegistry
      */
-    protected $tool;
+    private $registry;
 
     /**
-     * @var \Doctrine\ORM\Tools\SchemaTool
+     * @param ManagerRegistry $registry
+     *
+     * @internal param EntityManagerInterface $em
      */
-    protected $factory;
-
-    /**
-     * @param SchemaTool           $tool
-     * @param ClassMetadataFactory $factory
-     */
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $factory)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
-        $this->tool    = $tool;
-        $this->factory = $factory;
+        $this->registry = $registry;
     }
 
     /**
@@ -49,52 +45,57 @@ class SchemaDropCommand extends Command
      */
     public function fire()
     {
-        if ($this->option('sql')) {
-            if ($this->option('full')) {
-                $sql = $this->tool->getDropDatabaseSQL();
-            } else {
-                $sql = $this->tool->getDropSchemaSQL($this->factory->getAllMetadata());
-            }
-            $this->comment('     ' . implode(';     ' . PHP_EOL, $sql));
-
-            return;
-        }
-
-        if ($this->option('force')) {
-            $this->message('Dropping database schema...');
-
-            if ($this->option('full')) {
-                $this->tool->dropDatabase();
-            } else {
-                $this->tool->dropSchema($this->factory->getAllMetadata());
-            }
-
-            $this->info('Database schema dropped successfully!');
-
-            return;
-        }
-
         $this->error('ATTENTION: This operation should not be executed in a production environment.');
 
-        if ($this->option('full')) {
-            $sql = $this->tool->getDropDatabaseSQL();
-        } else {
-            $sql = $this->tool->getDropSchemaSQL($this->factory->getAllMetadata());
-        }
+        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
 
-        if (count($sql)) {
+        foreach ($names as $name) {
+            $em   = $this->registry->getManager($name);
+            $tool = new SchemaTool($em);
+
             $this->info('');
-            $pluralization = (1 === count($sql)) ? 'query was' : 'queries were';
-            $this->message(sprintf('The Schema-Tool would execute <info>"%s"</info> %s to update the database.', count($sql), $pluralization));
-            $this->message('Please run the operation by passing one - or both - of the following options:');
+            $this->message('Checking scheme for <info>' . $name . '</info> entity manager...');
 
-            $this->comment(sprintf('    <info>php artisan %s --force</info> to execute the command', $this->getName()));
-            $this->comment(sprintf('    <info>php artisan %s --sql</info> to dump the SQL statements to the screen', $this->getName()));
+            if ($this->option('sql')) {
+                if ($this->option('full')) {
+                    $sql = $tool->getDropDatabaseSQL();
+                } else {
+                    $sql = $tool->getDropSchemaSQL($em->getMetadataFactory()->getAllMetadata());
+                }
+                $this->comment('     ' . implode(';     ' . PHP_EOL, $sql));
+            } else {
+                if ($this->option('force')) {
+                    $this->message('Dropping database schema...');
 
-            return;
+                    if ($this->option('full')) {
+                        $tool->dropDatabase();
+                    } else {
+                        $tool->dropSchema($em->getMetadataFactory()->getAllMetadata());
+                    }
+
+                    $this->info('Database schema dropped successfully!');
+                }
+
+                if ($this->option('full')) {
+                    $sql = $tool->getDropDatabaseSQL();
+                } else {
+                    $sql = $tool->getDropSchemaSQL($em->getMetadataFactory()->getAllMetadata());
+                }
+
+                if (count($sql)) {
+                    $pluralization = (1 === count($sql)) ? 'query was' : 'queries were';
+                    $this->message(sprintf('The Schema-Tool would execute <info>"%s"</info> %s to update the database.',
+                        count($sql), $pluralization));
+                    $this->message('Please run the operation by passing one - or both - of the following options:');
+
+                    $this->comment(sprintf('    <info>php artisan %s --force</info> to execute the command',
+                        $this->getName()));
+                    $this->comment(sprintf('    <info>php artisan %s --sql</info> to dump the SQL statements to the screen',
+                        $this->getName()));
+                } else {
+                    $this->error('Nothing to drop. The database is empty!');
+                }
+            }
         }
-
-        $this->info('');
-        $this->error('Nothing to drop. The database is empty!');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Console;
 
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\SchemaTool;
 
 class SchemaCreateCommand extends Command
@@ -12,7 +12,8 @@ class SchemaCreateCommand extends Command
      * @var string
      */
     protected $signature = 'doctrine:schema:create
-    {--sql : Dumps the generated SQL statements to the screen (does not execute them)}';
+    {--sql : Dumps the generated SQL statements to the screen (does not execute them)}
+    {--em= : Create schema for a specific entity manager }';
 
     /**
      * The console command description.
@@ -21,24 +22,19 @@ class SchemaCreateCommand extends Command
     protected $description = 'Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output.';
 
     /**
-     * @var \Doctrine\ORM\Tools\SchemaTool
+     * @var ManagerRegistry
      */
-    protected $tool;
+    private $registry;
 
     /**
-     * @var \Doctrine\ORM\Tools\SchemaTool
+     * @param ManagerRegistry $registry
+     *
+     * @internal param EntityManagerInterface $em
      */
-    protected $factory;
-
-    /**
-     * @param SchemaTool           $tool
-     * @param ClassMetadataFactory $factory
-     */
-    public function __construct(SchemaTool $tool, ClassMetadataFactory $factory)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
-        $this->tool    = $tool;
-        $this->factory = $factory;
+        $this->registry = $registry;
     }
 
     /**
@@ -47,15 +43,26 @@ class SchemaCreateCommand extends Command
      */
     public function fire()
     {
-        $this->message('Creating database schema...', 'blue');
+        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
 
-        if ($this->option('sql')) {
-            $sql = $this->tool->getCreateSchemaSql($this->factory->getAllMetadata());
-            $this->comment('     ' . implode(';     ' . PHP_EOL, $sql));
-        } else {
+        if (!$this->option('sql')) {
             $this->error('ATTENTION: This operation should not be executed in a production environment.');
-            $this->tool->createSchema($this->factory->getAllMetadata());
-            $this->info('Database schema created successfully!');
         }
+
+        foreach ($names as $name) {
+            $em   = $this->registry->getManager($name);
+            $tool = new SchemaTool($em);
+
+            $this->message('Creating database schema for <info>' . $name . '</info> entity manager...', 'blue');
+
+            if ($this->option('sql')) {
+                $sql = $tool->getCreateSchemaSql($em->getMetadataFactory()->getAllMetadata());
+                $this->comment('     ' . implode(';     ' . PHP_EOL, $sql));
+            } else {
+                $tool->createSchema($em->getMetadataFactory()->getAllMetadata());
+            }
+        }
+
+        $this->info('Database schema created successfully!');
     }
 }

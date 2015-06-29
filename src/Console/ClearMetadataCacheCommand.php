@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Console;
 
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\XcacheCache;
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use InvalidArgumentException;
 use LogicException;
 
@@ -15,7 +15,8 @@ class ClearMetadataCacheCommand extends Command
      * @var string
      */
     protected $signature = 'doctrine:clear:metadata:cache
-    {--flush : If defined, cache entries will be flushed instead of deleted/invalidated.}';
+    {--flush : If defined, cache entries will be flushed instead of deleted/invalidated.}
+    {--em= : Clear cache for a specific entity manager }';
 
     /**
      * The console command description.
@@ -24,23 +25,19 @@ class ClearMetadataCacheCommand extends Command
     protected $description = 'Clear all metadata cache of the various cache drivers.';
 
     /**
-     * @var EntityManagerInterface
+     * @var ManagerRegistry
      */
-    protected $em;
+    private $registry;
 
     /**
-     * @var \Doctrine\Common\Cache\Cache|null
+     * @param ManagerRegistry $registry
+     *
+     * @internal param EntityManagerInterface $em
      */
-    protected $cache;
-
-    /**
-     * @param EntityManagerInterface $em
-     */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
-        $this->em    = $em;
-        $this->cache = $em->getConfiguration()->getMetadataCacheImpl();
+        $this->registry = $registry;
     }
 
     /**
@@ -49,28 +46,35 @@ class ClearMetadataCacheCommand extends Command
      */
     public function fire()
     {
-        if (!$this->cache) {
-            throw new InvalidArgumentException('No Metadata cache driver is configured on given EntityManager.');
+        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+
+        foreach ($names as $name) {
+            $em    = $this->registry->getManager($name);
+            $cache = $em->getConfiguration()->getMetadataCacheImpl();
+
+            if (!$cache) {
+                throw new InvalidArgumentException('No Result cache driver is configured on given EntityManager.');
+            }
+
+            if ($cache instanceof ApcCache) {
+                throw new LogicException("Cannot clear APC Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
+            }
+
+            if ($cache instanceof XcacheCache) {
+                throw new LogicException("Cannot clear XCache Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
+            }
+
+            $this->message('Clearing result cache entries for <info>' . $name . '</info> entity manager');
+
+            $result  = $cache->deleteAll();
+            $message = ($result) ? 'Successfully deleted cache entries.' : 'No cache entries were deleted.';
+
+            if ($this->option('flush')) {
+                $result  = $cache->flushAll();
+                $message = ($result) ? 'Successfully flushed cache entries.' : $message;
+            }
+
+            $this->info($message);
         }
-
-        if ($this->cache instanceof ApcCache) {
-            throw new LogicException("Cannot clear APC Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
-        }
-
-        if ($this->cache instanceof XcacheCache) {
-            throw new LogicException("Cannot clear XCache Cache from Console, its shared in the Webserver memory and not accessible from the CLI.");
-        }
-
-        $this->message('Clearing metadata cache entries');
-
-        $result  = $this->cache->deleteAll();
-        $message = ($result) ? 'Successfully deleted cache entries.' : 'No cache entries were deleted.';
-
-        if ($this->option('flush')) {
-            $result  = $this->cache->flushAll();
-            $message = ($result) ? 'Successfully flushed cache entries.' : $message;
-        }
-
-        $this->info($message);
     }
 }

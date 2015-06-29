@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Console;
 
-use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Console\MetadataFilter;
 use Exception;
 use InvalidArgumentException;
@@ -15,7 +15,8 @@ class GenerateProxiesCommand extends Command
      */
     protected $signature = 'doctrine:generate:proxies
     {dest-path? : The path to generate your proxy classes. If none is provided, it will attempt to grab from configuration.}
-    {-- filter=* : A string pattern used to match entities that should be processed.}';
+    {-- filter=* : A string pattern used to match entities that should be processed.}
+    {--em= : Generate proxies for a specific entity manager }';
 
     /**
      * The console command description.
@@ -24,17 +25,19 @@ class GenerateProxiesCommand extends Command
     protected $description = 'Generates proxy classes for entity classes.';
 
     /**
-     * @var EntityManagerInterface
+     * @var ManagerRegistry
      */
-    protected $em;
+    private $registry;
 
     /**
-     * @param EntityManagerInterface $em
+     * @param ManagerRegistry $registry
+     *
+     * @internal param EntityManagerInterface $em
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct();
-        $this->em = $em;
+        $this->registry = $registry;
     }
 
     /**
@@ -43,47 +46,57 @@ class GenerateProxiesCommand extends Command
      */
     public function fire()
     {
-        $metadatas = $this->em->getMetadataFactory()->getAllMetadata();
-        $metadatas = MetadataFilter::filter($metadatas, $this->option('filter'));
+        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
 
-        // Process destination directory
-        if (($destPath = $this->argument('dest-path')) === null) {
-            $destPath = $this->em->getConfiguration()->getProxyDir();
-        }
+        foreach ($names as $name) {
+            $em = $this->registry->getManager($name);
 
-        if (!is_dir($destPath)) {
-            mkdir($destPath, 0777, true);
-        }
+            $this->comment('');
+            $this->message('Generating proxies for <info>' . $name . '</info> entity manager...', 'blue');
 
-        $destPath = realpath($destPath);
+            $metadatas = $em->getMetadataFactory()->getAllMetadata();
+            $metadatas = MetadataFilter::filter($metadatas, $this->option('filter'));
 
-        if (!file_exists($destPath)) {
-            throw new InvalidArgumentException(
-                sprintf("Proxies destination directory '<info>%s</info>' does not exist.",
-                    $this->em->getConfiguration()->getProxyDir())
-            );
-        }
+            // Process destination directory
+            if (($destPath = $this->argument('dest-path')) === null) {
+                $destPath = $em->getConfiguration()->getProxyDir();
+            }
 
-        if (!is_writable($destPath)) {
-            throw new InvalidArgumentException(
-                sprintf("Proxies destination directory '<info>%s</info>' does not have write permissions.", $destPath)
-            );
-        }
+            if (!is_dir($destPath)) {
+                mkdir($destPath, 0777, true);
+            }
 
-        if (count($metadatas)) {
-            foreach ($metadatas as $metadata) {
-                $this->comment(
-                    sprintf('Processing entity "<info>%s</info>"', $metadata->name)
+            $destPath = realpath($destPath);
+
+            if (!file_exists($destPath)) {
+                throw new InvalidArgumentException(
+                    sprintf("Proxies destination directory '<info>%s</info>' does not exist.",
+                        $em->getConfiguration()->getProxyDir())
                 );
             }
 
-            // Generating Proxies
-            $this->em->getProxyFactory()->generateProxyClasses($metadatas, $destPath);
+            if (!is_writable($destPath)) {
+                throw new InvalidArgumentException(
+                    sprintf("Proxies destination directory '<info>%s</info>' does not have write permissions.",
+                        $destPath)
+                );
+            }
 
-            // Outputting information message
-            $this->comment(PHP_EOL . sprintf('Proxy classes generated to "<info>%s</INFO>"', $destPath));
-        } else {
-            $this->error('No Metadata Classes to process.');
+            if (count($metadatas)) {
+                foreach ($metadatas as $metadata) {
+                    $this->comment(
+                        sprintf('Processing entity "<info>%s</info>"', $metadata->name)
+                    );
+                }
+
+                // Generating Proxies
+                $em->getProxyFactory()->generateProxyClasses($metadatas, $destPath);
+
+                // Outputting information message
+                $this->comment(sprintf('Proxy classes generated to "<info>%s</INFO>"', $destPath));
+            } else {
+                $this->error('No Metadata Classes to process.');
+            }
         }
     }
 }

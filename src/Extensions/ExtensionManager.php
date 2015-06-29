@@ -3,6 +3,7 @@
 namespace Brouwers\LaravelDoctrine\Extensions;
 
 use Doctrine\Common\Annotations\Reader;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\DoctrineExtensions;
@@ -13,6 +14,13 @@ class ExtensionManager
      * @var array|Extension[]
      */
     protected $extensions = [];
+
+    /**
+     * @var arary
+     */
+    protected $gedmo = [
+        'enabled' => false
+    ];
 
     /**
      * @var MappingDriverChain
@@ -35,22 +43,21 @@ class ExtensionManager
     protected $metadata;
 
     /**
-     * @var Reader|bool
+     * @var Reader
      */
     protected $reader;
 
     /**
-     * @param EntityManagerInterface $em
+     * @var ManagerRegistry
      */
-    public function __construct(EntityManagerInterface $em)
+    protected $registry;
+
+    /**
+     * @param ManagerRegistry $registry
+     */
+    public function __construct(ManagerRegistry $registry)
     {
-        $this->em       = $em;
-        $this->evm      = $em->getEventManager();
-        $this->chain    = new MappingDriverChain();
-        $this->metadata = $em->getConfiguration();
-        $this->reader   = method_exists($this->metadata->getMetadataDriverImpl(), 'getReader')
-            ? $this->metadata->getMetadataDriverImpl()->getReader()
-            : false;
+        $this->registry = $registry;
     }
 
     /**
@@ -58,8 +65,22 @@ class ExtensionManager
      */
     public function boot()
     {
-        foreach ($this->extensions as $extenion) {
-            $this->bootExtension($extenion);
+        foreach ($this->registry->getManagers() as $em) {
+            $this->em       = $em;
+            $this->chain    = new MappingDriverChain();
+            $this->evm      = $this->em->getEventManager();
+            $this->metadata = $this->em->getConfiguration();
+            $this->reader   = method_exists($this->metadata->getMetadataDriverImpl(), 'getReader')
+                ? $this->metadata->getMetadataDriverImpl()->getReader()
+                : false;
+
+            if ($this->gedmo['enabled']) {
+                $this->bootGedmoExtensions($this->gedmo['namespace'], $this->gedmo['all']);
+            }
+
+            foreach ($this->extensions as $extenion) {
+                $this->bootExtension($extenion);
+            }
         }
     }
 
@@ -91,6 +112,21 @@ class ExtensionManager
      * @param bool   $all
      */
     public function enableGedmoExtensions($namespace = 'App', $all = true)
+    {
+        $this->gedmo = [
+            'enabled'   => true,
+            'namespace' => $namespace,
+            'all'       => $all
+        ];
+    }
+
+    /**
+     * Enable Gedmo Doctrine Extensions
+     *
+     * @param string $namespace
+     * @param bool   $all
+     */
+    public function bootGedmoExtensions($namespace = 'App', $all = true)
     {
         if ($all) {
             DoctrineExtensions::registerMappingIntoDriverChainORM(

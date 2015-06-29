@@ -13,6 +13,27 @@ return [
     'dev'                       => config('app.debug'),
     /*
     |--------------------------------------------------------------------------
+    | Entity Mangers
+    |--------------------------------------------------------------------------
+    |
+    */
+    'managers'                  => [
+        'default' => [
+            'meta'       => 'annotations',
+            'connection' => config('database.default'),
+            'paths'      => [
+                app_path()
+            ],
+            'repository' => Doctrine\ORM\EntityRepository::class,
+            'proxies'    => [
+                'namespace'     => false,
+                'path'          => storage_path('proxies'),
+                'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false)
+            ]
+        ]
+    ],
+    /*
+    |--------------------------------------------------------------------------
     | Connections
     |--------------------------------------------------------------------------
     |
@@ -20,8 +41,7 @@ return [
     |
     */
     'connections'               => [
-        'default' => config('database.default'),
-        'prefix'  => ''
+        'prefix' => ''
     ],
     /*
     |--------------------------------------------------------------------------
@@ -33,56 +53,24 @@ return [
     */
     'meta'                      => [
         'namespace' => 'App',
-        'driver'    => 'annotations',
         'drivers'   => [
             'annotations' => [
-                'driver'  => 'annotations',
-                'simple'  => false,
-                'paths'   => [
-                    app_path()
-                ],
-                'proxies' => [
-                    'path' => storage_path('proxies/annotations')
-                ]
+                'driver' => 'annotations',
+                'simple' => false
             ],
             'yaml'        => [
-                'driver'  => 'yaml',
-                'paths'   => [
-                    config_path('yaml')
-                ],
-                'proxies' => [
-                    'path' => storage_path('proxies/yaml')
-                ]
+                'driver' => 'yaml'
             ],
             'xml'         => [
-                'driver'  => 'xml',
-                'paths'   => [
-                    config_path('xml')
-                ],
-                'proxies' => [
-                    'path' => storage_path('proxies/xml')
-                ]
+                'driver' => 'xml'
             ],
             'config'      => [
                 'driver'       => 'config',
-                'mapping_file' => 'mappings',
-                'proxies'      => [
-                    'path' => storage_path('proxies/config')
-                ]
+                'mapping_file' => 'mappings'
             ],
-            'static_php'      => [
-                'driver'  => 'static_php',
-                'paths'   => [
-                    app_path()
-                ],
-                'proxies' => [
-                    'path' => storage_path('proxies/static')
-                ]
+            'static_php'  => [
+                'driver' => 'static_php'
             ]
-        ],
-        'proxies'   => [
-            'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false),
-            'namespace'     => false
         ]
     ],
     /*
@@ -164,12 +152,6 @@ return [
         //'SOUNDEX'     => DoctrineExtensions\Query\Mysql\Soundex::class,
         //'STR_TO_DATE' => DoctrineExtensions\Query\Mysql\StrToDat::class
     ],
-    /*
-    |--------------------------------------------------------------------------
-    | Default repository
-    |--------------------------------------------------------------------------
-    */
-    'repository'                => Doctrine\ORM\EntityRepository::class,
     /*
     |--------------------------------------------------------------------------
     | Enable Debugbar Doctrine query collection
