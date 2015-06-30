@@ -22,35 +22,20 @@ class SchemaCreateCommand extends Command
     protected $description = 'Processes the schema and either create it directly on EntityManager Storage Connection or generate the SQL output.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
      * Execute the console command.
-     * @return void
+     *
+     * @param ManagerRegistry $registry
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         if (!$this->option('sql')) {
             $this->error('ATTENTION: This operation should not be executed in a production environment.');
         }
 
         foreach ($names as $name) {
-            $em   = $this->registry->getManager($name);
+            $em   = $registry->getManager($name);
             $tool = new SchemaTool($em);
 
             $this->message('Creating database schema for <info>' . $name . '</info> entity manager...', 'blue');

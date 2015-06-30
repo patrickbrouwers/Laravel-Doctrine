@@ -24,33 +24,18 @@ class SchemaDropCommand extends Command
     protected $description = 'Drop the complete database schema of EntityManager Storage Connection or generate the corresponding SQL output.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
      * Execute the console command.
-     * @return void
+     *
+     * @param ManagerRegistry $registry
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
         $this->error('ATTENTION: This operation should not be executed in a production environment.');
 
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         foreach ($names as $name) {
-            $em   = $this->registry->getManager($name);
+            $em   = $registry->getManager($name);
             $tool = new SchemaTool($em);
 
             $this->info('');

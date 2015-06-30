@@ -4,7 +4,6 @@ namespace Brouwers\LaravelDoctrine\Console;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\Tools\Console\MetadataFilter;
-use Exception;
 use InvalidArgumentException;
 
 class GenerateProxiesCommand extends Command
@@ -25,31 +24,16 @@ class GenerateProxiesCommand extends Command
     protected $description = 'Generates proxy classes for entity classes.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
      * Execute the console command.
-     * @throws Exception
+     *
+     * @param ManagerRegistry $registry
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         foreach ($names as $name) {
-            $em = $this->registry->getManager($name);
+            $em = $registry->getManager($name);
 
             $this->comment('');
             $this->message('Generating proxies for <info>' . $name . '</info> entity manager...', 'blue');

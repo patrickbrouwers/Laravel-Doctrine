@@ -5,7 +5,6 @@ namespace Brouwers\LaravelDoctrine\Console;
 use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\XcacheCache;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use LogicException;
 
@@ -26,31 +25,16 @@ class ClearResultCacheCommand extends Command
     protected $description = 'Clear all result cache of the various cache drivers.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
      * Execute the console command.
-     * @return void
+     *
+     * @param ManagerRegistry $registry
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         foreach ($names as $name) {
-            $em    = $this->registry->getManager($name);
+            $em    = $registry->getManager($name);
             $cache = $em->getConfiguration()->getResultCacheImpl();
 
             if (!$cache) {

@@ -21,31 +21,18 @@ class InfoCommand extends Command
     protected $description = 'Show basic information about all mapped entities.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
+     * Execute the console command.
+     *
      * @param ManagerRegistry $registry
      *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
-     * Execute the console command.
      * @throws Exception
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         foreach ($names as $name) {
-            $em = $this->registry->getManager($name);
+            $em = $registry->getManager($name);
 
             $entityClassNames = $em->getConfiguration()
                                    ->getMetadataDriverImpl()

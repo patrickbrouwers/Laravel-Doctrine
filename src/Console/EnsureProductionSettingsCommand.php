@@ -3,7 +3,6 @@
 namespace Brouwers\LaravelDoctrine\Console;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 
 class EnsureProductionSettingsCommand extends Command
@@ -23,31 +22,16 @@ class EnsureProductionSettingsCommand extends Command
     protected $description = 'Verify that Doctrine is properly configured for a production environment.';
 
     /**
-     * @var ManagerRegistry
-     */
-    private $registry;
-
-    /**
-     * @param ManagerRegistry $registry
-     *
-     * @internal param EntityManagerInterface $em
-     */
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct();
-        $this->registry = $registry;
-    }
-
-    /**
      * Execute the console command.
-     * @return void
+     *
+     * @param ManagerRegistry $registry
      */
-    public function fire()
+    public function fire(ManagerRegistry $registry)
     {
-        $names = $this->option('em') ? [$this->option('em')] : $this->registry->getManagerNames();
+        $names = $this->option('em') ? [$this->option('em')] : $registry->getManagerNames();
 
         foreach ($names as $name) {
-            $em = $this->registry->getManager($name);
+            $em = $registry->getManager($name);
 
             try {
                 $em->getConfiguration()->ensureProductionSettings();
