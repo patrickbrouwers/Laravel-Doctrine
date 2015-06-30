@@ -224,11 +224,13 @@ class DoctrineServiceProvider extends ServiceProvider
             }
 
             $configuration->getMetadataDriverImpl()->addPaths([
-                __DIR__ . '/Migrations'
+                __DIR__ . '/Migrations',
+                __DIR__ . '/Auth/Passwords'
             ]);
 
-            $configuration->getMetadataDriverImpl()
-                          ->setNamingStrategy($this->app->make(LaravelNamingStrategy::class));
+            $configuration->setNamingStrategy(
+                $this->app->make(LaravelNamingStrategy::class)
+            );
 
             // Custom functions
             $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
