@@ -5,6 +5,7 @@ namespace Brouwers\LaravelDoctrine;
 use Brouwers\LaravelDoctrine\Auth\DoctrineUserProvider;
 use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
 use Brouwers\LaravelDoctrine\Configuration\Connections\ConnectionManager;
+use Brouwers\LaravelDoctrine\Configuration\LaravelNamingStrategy;
 use Brouwers\LaravelDoctrine\Configuration\MetaData\MetaDataManager;
 use Brouwers\LaravelDoctrine\Console\ClearMetadataCacheCommand;
 use Brouwers\LaravelDoctrine\Console\ClearQueryCacheCommand;
@@ -225,6 +226,9 @@ class DoctrineServiceProvider extends ServiceProvider
             $configuration->getMetadataDriverImpl()->addPaths([
                 __DIR__ . '/Migrations'
             ]);
+
+            $configuration->getMetadataDriverImpl()
+                          ->setNamingStrategy($this->app->make(LaravelNamingStrategy::class));
 
             // Custom functions
             $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
