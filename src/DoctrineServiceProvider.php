@@ -18,6 +18,7 @@ use Brouwers\LaravelDoctrine\Console\SchemaUpdateCommand;
 use Brouwers\LaravelDoctrine\Console\SchemaValidateCommand;
 use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFound;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
+use Brouwers\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Proxy;
@@ -33,7 +34,6 @@ use Illuminate\Support\ServiceProvider;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
-
     /**
      * Indicates if loading of the provider is deferred.
      * @var bool
@@ -51,6 +51,7 @@ class DoctrineServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->extendAuthManager();
+        $this->extendMigrator();
 
         // Boot the extension manager
         $this->app->make(ExtensionManager::class)->boot();
@@ -97,11 +98,11 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function setUpEntityManagers()
     {
-        $managers = [];
+        $managers    = [];
         $connections = [];
 
         foreach ($this->config['managers'] as $manager => $settings) {
-            $managerName = IlluminateRegistry::getManagerNamePrefix() . $manager;
+            $managerName    = IlluminateRegistry::getManagerNamePrefix() . $manager;
             $connectionName = IlluminateRegistry::getConnectionNamePrefix() . $manager;
 
             // Bind manager
@@ -145,7 +146,7 @@ class DoctrineServiceProvider extends ServiceProvider
                 $app->make(IlluminateRegistry::getManagerNamePrefix() . $manager)->getConnection();
             });
 
-            $managers[$manager] = $manager;
+            $managers[$manager]    = $manager;
             $connections[$manager] = $manager;
         }
 
@@ -220,6 +221,10 @@ class DoctrineServiceProvider extends ServiceProvider
                     new DoctrineCollector($debugStack)
                 );
             }
+
+            $configuration->getMetadataDriverImpl()->addPaths([
+                __DIR__ . '/Migrations'
+            ]);
 
             // Custom functions
             $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
@@ -336,6 +341,16 @@ class DoctrineServiceProvider extends ServiceProvider
     }
 
     /**
+     * Extend the migrator
+     */
+    protected function extendMigrator()
+    {
+        $this->app->bindShared('migration.repository', function ($app) {
+            return $app->make(DoctrineMigrationRepository::class);
+        });
+    }
+
+    /**
      * @return string
      */
     protected function getConfigPath()
@@ -352,6 +367,7 @@ class DoctrineServiceProvider extends ServiceProvider
         return [
             'em',
             'validation.presence',
+            'migration.repository',
             AuthManager::class,
             EntityManager::class,
             ClassMetadataFactory::class,
