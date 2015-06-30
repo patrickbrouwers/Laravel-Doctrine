@@ -27,13 +27,15 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\ServiceProvider;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
+
     /**
      * Indicates if loading of the provider is deferred.
-     *
      * @var bool
      */
     protected $defer = true;
@@ -95,11 +97,11 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function setUpEntityManagers()
     {
-        $managers    = [];
+        $managers = [];
         $connections = [];
 
         foreach ($this->config['managers'] as $manager => $settings) {
-            $managerName    = IlluminateRegistry::getManagerNamePrefix() . $manager;
+            $managerName = IlluminateRegistry::getManagerNamePrefix() . $manager;
             $connectionName = IlluminateRegistry::getConnectionNamePrefix() . $manager;
 
             // Bind manager
@@ -143,7 +145,7 @@ class DoctrineServiceProvider extends ServiceProvider
                 $app->make(IlluminateRegistry::getManagerNamePrefix() . $manager)->getConnection();
             });
 
-            $managers[$manager]    = $manager;
+            $managers[$manager] = $manager;
             $connections[$manager] = $manager;
         }
 
@@ -324,9 +326,9 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function extendAuthManager()
     {
-        $this->app['Illuminate\Auth\AuthManager']->extend('doctrine', function ($app) {
+        $this->app[AuthManager::class]->extend('doctrine', function ($app) {
             return new DoctrineUserProvider(
-                $app['Illuminate\Contracts\Hashing\Hasher'],
+                $app[Hasher::class],
                 $app['em'],
                 $app['config']['auth.model']
             );
@@ -349,9 +351,13 @@ class DoctrineServiceProvider extends ServiceProvider
     {
         return [
             'em',
+            'validation.presence',
+            AuthManager::class,
             EntityManager::class,
             ClassMetadataFactory::class,
-            EntityManagerInterface::class
+            EntityManagerInterface::class,
+            ExtensionManager::class,
+            ManagerRegistry::class
         ];
     }
 }
