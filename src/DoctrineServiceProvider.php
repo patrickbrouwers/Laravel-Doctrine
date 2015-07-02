@@ -43,11 +43,17 @@ class DoctrineServiceProvider extends ServiceProvider
     protected $config;
 
     /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = true;
+
+    /**
      * Boot service provider.
      */
     public function boot()
     {
-        \Log::info('booted');
         $this->extendAuthManager();
         $this->extendMigrator();
 
@@ -277,19 +283,19 @@ class DoctrineServiceProvider extends ServiceProvider
                 );
             }
 
-            return $manager;
-        });
+            // Register the extensions
+            foreach ($this->config['extensions'] as $extension) {
+                if (!class_exists($extension)) {
+                    throw new ExtensionNotFound("Extension {$extension} not found");
+                }
 
-        // Register the extensions
-        foreach ($this->config['extensions'] as $extension) {
-            if (!class_exists($extension)) {
-                throw new ExtensionNotFound("Extension {$extension} not found");
+                $manager->register(
+                    $app->make($extension)
+                );
             }
 
-            $this->app->make(ExtensionManager::class)->register(
-                $this->app->make($extension)
-            );
-        }
+            return $manager;
+        });
     }
 
     /**
@@ -363,5 +369,24 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function getConfigPath()
     {
         return __DIR__ . '/../config/doctrine.php';
+    }
+
+    /**
+     * Get the services provided by the provider.
+     * @return array
+     */
+    public function provides()
+    {
+        return [
+            'em',
+            'validation.presence',
+            'migration.repository',
+            AuthManager::class,
+            EntityManager::class,
+            ClassMetadataFactory::class,
+            EntityManagerInterface::class,
+            ExtensionManager::class,
+            ManagerRegistry::class
+        ];
     }
 }
