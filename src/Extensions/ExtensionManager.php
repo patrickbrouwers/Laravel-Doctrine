@@ -107,9 +107,11 @@ class ExtensionManager
     {
         $extension->addSubscribers($this->evm, $this->em, $this->reader);
 
-        foreach ($extension->getFilters() as $name => $filter) {
-            $this->metadata->addFilter($name, $filter);
-            $this->em->getFilters()->enable($name);
+        if (is_array($extension->getFilters())) {
+            foreach ($extension->getFilters() as $name => $filter) {
+                $this->metadata->addFilter($name, $filter);
+                $this->em->getFilters()->enable($name);
+            }
         }
     }
 

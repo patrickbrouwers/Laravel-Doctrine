@@ -97,11 +97,16 @@ return [
     |
     */
     'extensions'                => [
-        Brouwers\LaravelDoctrine\Extensions\Timestamps\TimestampableExtension::class,
-        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
-        //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
-        //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Timestamps\TimestampableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\TablePrefix\TablePrefixExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Sluggable\SluggableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Tree\TreeExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Blameable\BlameableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\IpTraceable\IpTraceableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\Translatable\TranslatableExtension::class
     ],
     /*
     |--------------------------------------------------------------------------
