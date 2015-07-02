@@ -115,10 +115,10 @@ return [
     */
     'custom_types'              => [
         'json'             => Brouwers\LaravelDoctrine\Types\Json::class,
-        'CarbonDate'       => DoctrineExtensions\Types\CarbonDateType::class,
-        'CarbonDateTime'   => DoctrineExtensions\Types\CarbonDateTimeType::class,
-        'CarbonDateTimeTz' => DoctrineExtensions\Types\CarbonDateTimeTzType::class,
-        'CarbonTime'       => DoctrineExtensions\Types\CarbonTimeType::class
+        //'CarbonDate'       => DoctrineExtensions\Types\CarbonDateType::class,
+        //'CarbonDateTime'   => DoctrineExtensions\Types\CarbonDateTimeType::class,
+        //'CarbonDateTimeTz' => DoctrineExtensions\Types\CarbonDateTimeTzType::class,
+        //'CarbonTime'       => DoctrineExtensions\Types\CarbonTimeType::class
     ],
     /*
     |--------------------------------------------------------------------------
