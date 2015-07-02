@@ -55,7 +55,7 @@ return [
         'namespaces' => [
             'App'
         ],
-        'drivers'   => [
+        'drivers'    => [
             'annotations' => [
                 'driver' => 'annotations',
                 'simple' => false
@@ -97,10 +97,11 @@ return [
     |
     */
     'extensions'                => [
-        //Brouwers\LaravelDoctrine\Extensions\TablePrefix\TablePrefixExtension::class,
-        //Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
+        Brouwers\LaravelDoctrine\Extensions\Timestamps\TimestampableExtension::class,
+        Brouwers\LaravelDoctrine\Extensions\SoftDeletes\SoftDeleteableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Loggable\LoggableExtension::class,
         //Brouwers\LaravelDoctrine\Extensions\Sortable\SortableExtension::class,
+        //Brouwers\LaravelDoctrine\Extensions\TablePrefix\TablePrefixExtension::class,
     ],
     /*
     |--------------------------------------------------------------------------

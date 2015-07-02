@@ -2,43 +2,28 @@
 
 namespace Brouwers\LaravelDoctrine\Extensions\Timestamps;
 
-use Carbon\Carbon;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 trait Timestamps
 {
     /**
-     * @ORM\Column(name="created_at", type="CarbonDateTime", nullable=false)
-     * @var Carbon
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
+     * @Gedmo\Timestampable(on="create")
+     * @var DateTime
      */
     protected $createdAt;
 
     /**
-     * @ORM\Column(name="updated_at", type="CarbonDateTime", nullable=false)
-     * @var Carbon
+     * @ORM\Column(name="updated_at", type="datetime", nullable=false)
+     * @Gedmo\Timestampable(on="update")
+     * @var DateTime
      */
     protected $updatedAt;
 
     /**
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $now = Carbon::now();
-        $this->setCreatedAt($now);
-        $this->setUpdatedAt($now);
-    }
-
-    /**
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->setUpdatedAt(Carbon::now());
-    }
-
-    /**
-     * @return Carbon
+     * @return DateTime
      */
     public function getCreatedAt()
     {
@@ -46,15 +31,7 @@ trait Timestamps
     }
 
     /**
-     * @param Carbon $createdAt
-     */
-    public function setCreatedAt(Carbon $createdAt)
-    {
-        $this->createdAt = $createdAt;
-    }
-
-    /**
-     * @return Carbon
+     * @return DateTime
      */
     public function getUpdatedAt()
     {
@@ -62,9 +39,17 @@ trait Timestamps
     }
 
     /**
-     * @param Carbon $updatedAt
+     * @param DateTime $createdAt
      */
-    public function setUpdatedAt(Carbon $updatedAt)
+    public function setCreatedAt(DateTime $createdAt)
+    {
+        $this->createdAt = $createdAt;
+    }
+
+    /**
+     * @param DateTime $updatedAt
+     */
+    public function setUpdatedAt(DateTime $updatedAt)
     {
         $this->updatedAt = $updatedAt;
     }
