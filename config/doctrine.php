@@ -52,7 +52,9 @@ return [
     |
     */
     'meta'                      => [
-        'namespace' => 'App',
+        'namespaces' => [
+            'App'
+        ],
         'drivers'   => [
             'annotations' => [
                 'driver' => 'annotations',

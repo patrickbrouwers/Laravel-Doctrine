@@ -3,26 +3,19 @@
 namespace Brouwers\LaravelDoctrine\Configuration;
 
 use Brouwers\LaravelDoctrine\Exceptions\DriverNotRegistered;
+use Closure;
 
 trait ExtendableTrait
 {
-    /**
-     * @var array
-     */
-    protected $drivers = [];
-
     /**
      * @var static
      */
     protected static $instance;
 
     /**
-     * @param $driver
+     * @var array
      */
-    public function register(Driver $driver)
-    {
-        $this->drivers[$driver->getName()] = $driver;
-    }
+    protected $drivers = [];
 
     /**
      * @param $name
@@ -42,6 +35,14 @@ trait ExtendableTrait
     }
 
     /**
+     * @param callable $callback
+     */
+    public static function resolved(Closure $callback)
+    {
+        app('events')->listen(get_class(self::getInstance()) . ':resolved', $callback);
+    }
+
+    /**
      * @param      $driver
      * @param null $default
      *
@@ -54,6 +55,14 @@ trait ExtendableTrait
         }
 
         return $default;
+    }
+
+    /**
+     * @return static
+     */
+    public static function getInstance()
+    {
+        return static::$instance = static::$instance ?: new static();
     }
 
     /**
@@ -76,11 +85,11 @@ trait ExtendableTrait
     }
 
     /**
-     * @return static
+     * @param $driver
      */
-    public static function getInstance()
+    public function register(Driver $driver)
     {
-        return static::$instance = static::$instance ?: new static();
+        $this->drivers[$driver->getName()] = $driver;
     }
 
     /**

@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\DoctrineExtensions;
+use Illuminate\Contracts\Events\Dispatcher;
 
 class ExtensionManager
 {
@@ -53,11 +54,18 @@ class ExtensionManager
     protected $registry;
 
     /**
-     * @param ManagerRegistry $registry
+     * @var Dispatcher
      */
-    public function __construct(ManagerRegistry $registry)
+    protected $dispatcher;
+
+    /**
+     * @param ManagerRegistry $registry
+     * @param Dispatcher      $dispatcher
+     */
+    public function __construct(ManagerRegistry $registry, Dispatcher $dispatcher)
     {
-        $this->registry = $registry;
+        $this->registry   = $registry;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -123,10 +131,10 @@ class ExtensionManager
     /**
      * Enable Gedmo Doctrine Extensions
      *
-     * @param string $namespace
-     * @param bool   $all
+     * @param array $namespaces
+     * @param bool  $all
      */
-    public function bootGedmoExtensions($namespace = 'App', $all = true)
+    public function bootGedmoExtensions($namespaces = ['App'], $all = true)
     {
         if ($all) {
             DoctrineExtensions::registerMappingIntoDriverChainORM(
@@ -140,7 +148,15 @@ class ExtensionManager
             );
         }
 
-        $this->chain->addDriver($this->metadata->getMetadataDriverImpl(), $namespace);
+        $driver = $this->metadata->getMetadataDriverImpl();
+        foreach ($namespaces as $namespace) {
+            $this->chain->addDriver($driver, $namespace);
+        }
         $this->metadata->setMetadataDriverImpl($this->chain);
+
+        $this->dispatcher->fire('doctrine.driver-chain::booted', [
+            $driver,
+            $this->chain
+        ]);
     }
 }

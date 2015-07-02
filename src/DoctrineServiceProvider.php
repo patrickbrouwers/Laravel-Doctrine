@@ -21,6 +21,7 @@ use Brouwers\LaravelDoctrine\Exceptions\ExtensionNotFound;
 use Brouwers\LaravelDoctrine\Extensions\ExtensionManager;
 use Brouwers\LaravelDoctrine\Migrations\DoctrineMigrationRepository;
 use Brouwers\LaravelDoctrine\Validation\DoctrinePresenceVerifier;
+use DebugBar\Bridge\DoctrineCollector;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Logging\DebugStack;
@@ -30,17 +31,12 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadataFactory;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\ServiceProvider;
 
 class DoctrineServiceProvider extends ServiceProvider
 {
-    /**
-     * Indicates if loading of the provider is deferred.
-     * @var bool
-     */
-    protected $defer = true;
-
     /**
      * @var array
      */
@@ -51,6 +47,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        \Log::info('booted');
         $this->extendAuthManager();
         $this->extendMigrator();
 
@@ -267,11 +264,15 @@ class DoctrineServiceProvider extends ServiceProvider
         // Bind extension manager as singleton,
         // so user can call it and add own extensions
         $this->app->singleton(ExtensionManager::class, function ($app) {
-            $manager = new ExtensionManager($this->app[ManagerRegistry::class]);
+
+            $manager = new ExtensionManager(
+                $this->app[ManagerRegistry::class],
+                $this->app[Dispatcher::class]
+            );
 
             if ($this->config['gedmo_extensions']['enabled']) {
                 $manager->enableGedmoExtensions(
-                    $this->config['meta']['namespace'],
+                    $this->config['meta']['namespaces'],
                     $this->config['gedmo_extensions']['all_mappings']
                 );
             }
@@ -362,24 +363,5 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function getConfigPath()
     {
         return __DIR__ . '/../config/doctrine.php';
-    }
-
-    /**
-     * Get the services provided by the provider.
-     * @return array
-     */
-    public function provides()
-    {
-        return [
-            'em',
-            'validation.presence',
-            'migration.repository',
-            AuthManager::class,
-            EntityManager::class,
-            ClassMetadataFactory::class,
-            EntityManagerInterface::class,
-            ExtensionManager::class,
-            ManagerRegistry::class
-        ];
     }
 }

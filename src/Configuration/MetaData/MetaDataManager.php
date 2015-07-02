@@ -68,12 +68,4 @@ class MetaDataManager implements Extendable, Hookable
 
         throw new CouldNotExtend('Expected an instance of MetaData or Doctrine\ORM\Configuration');
     }
-
-    /**
-     * @param callable $callback
-     */
-    public static function resolved(Closure $callback)
-    {
-        app('events')->listen(get_class(self::getInstance()) . ':resolved', $callback);
-    }
 }
