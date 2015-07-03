@@ -20,6 +20,7 @@ class SqliteConnection extends AbstractConnection
             'driver'   => 'pdo_sqlite',
             'user'     => array_get($config, 'username'),
             'password' => array_get($config, 'password'),
+            'prefix'   => array_get($config, 'prefix'),
             'memory'   => $config['database'] == ':memory' ? true : false,
             'path'     => $config['database'] == ':memory' ? null : $config['database']
         ]);

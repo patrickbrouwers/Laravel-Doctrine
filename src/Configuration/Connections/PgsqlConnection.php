@@ -24,7 +24,8 @@ class PgsqlConnection extends AbstractConnection
             'password' => array_get($config, 'password'),
             'charset'  => array_get($config, 'charset'),
             'port'     => array_get($config, 'port'),
-            'sslmode'  => array_get($config, 'sslmode')
+            'sslmode'  => array_get($config, 'sslmode'),
+            'prefix'   => array_get($config, 'prefix'),
         ]);
     }
 }

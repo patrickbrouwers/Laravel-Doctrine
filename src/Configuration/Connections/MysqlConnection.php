@@ -24,7 +24,8 @@ class MysqlConnection extends AbstractConnection
             'password'    => array_get($config, 'password'),
             'charset'     => array_get($config, 'charset'),
             'port'        => array_get($config, 'port'),
-            'unix_socket' => array_get($config, 'unix_socket')
+            'unix_socket' => array_get($config, 'unix_socket'),
+            'prefix'      => array_get($config, 'prefix'),
         ]);
     }
 }

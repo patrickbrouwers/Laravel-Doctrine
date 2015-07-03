@@ -5,6 +5,7 @@ namespace Brouwers\LaravelDoctrine\Extensions\TablePrefix;
 use Brouwers\LaravelDoctrine\Extensions\Extension;
 use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Driver\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Events;
 
@@ -19,7 +20,9 @@ class TablePrefixExtension implements Extension
     {
         $manager->addEventListener(
             Events::loadClassMetadata,
-            new TablePrefixListener(config('doctrine.connections.prefix'))
+            new TablePrefixListener(
+                $this->getPrefix($em->getConnection())
+            )
         );
     }
 
@@ -29,5 +32,17 @@ class TablePrefixExtension implements Extension
     public function getFilters()
     {
         return [];
+    }
+
+    /**
+     * @param Connection $connection
+     *
+     * @return string
+     */
+    protected function getPrefix(Connection $connection)
+    {
+        $params = $connection->getParams();
+
+        return isset($params['prefix']) ? $params['prefix'] : null;
     }
 }
