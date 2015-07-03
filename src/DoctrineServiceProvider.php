@@ -26,6 +26,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\ORM\Cache\DefaultCacheFactory;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -242,6 +243,7 @@ class DoctrineServiceProvider extends ServiceProvider
                 __DIR__ . '/Auth/Passwords'
             ]);
 
+            // Automatically make table, column names, etc. like Laravel
             $configuration->setNamingStrategy(
                 $this->app->make(LaravelNamingStrategy::class)
             );
@@ -250,6 +252,21 @@ class DoctrineServiceProvider extends ServiceProvider
             $configuration->setCustomDatetimeFunctions($this->config['custom_datetime_functions']);
             $configuration->setCustomNumericFunctions($this->config['custom_numeric_functions']);
             $configuration->setCustomStringFunctions($this->config['custom_string_functions']);
+
+            // Second level caching
+            if ($this->config['cache']['second_level']) {
+                $configuration->setSecondLevelCacheEnabled(true);
+
+                $cacheConfig = $configuration->getSecondLevelCacheConfiguration();
+                $cacheConfig->setCacheFactory(
+                    new DefaultCacheFactory(
+                        $cacheConfig->getRegionsConfiguration(),
+                        CacheManager::resolve(
+                            $this->config['cache']['default']
+                        )
+                    )
+                );
+            }
         });
     }
 

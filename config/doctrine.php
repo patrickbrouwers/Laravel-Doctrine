@@ -183,6 +183,7 @@ return [
     |
     */
     'cache'                     => [
-        'default' => config('cache.default')
+        'default'      => config('cache.default'),
+        'second_level' => false,
     ]
 ];

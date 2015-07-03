@@ -18,6 +18,11 @@ trait ExtendableTrait
     protected $drivers = [];
 
     /**
+     * @var array
+     */
+    protected static $resolved = [];
+
+    /**
      * @param $name
      *
      * @throws DriverNotRegistered
@@ -25,6 +30,11 @@ trait ExtendableTrait
      */
     public static function resolve($name)
     {
+        // Only resolve once
+        if (isset(static::$resolved[$name])) {
+            return static::$resolved[$name];
+        }
+
         if ($driver = self::getInstance()->get($name)) {
             event(get_class(self::getInstance()) . ':resolved', $driver);
 
