@@ -7,7 +7,7 @@ return [
     | Development state
     |--------------------------------------------------------------------------
     |
-    | If set to false, caching will become active
+    | If set to false, metadata caching will become active
     |
     */
     'dev'                       => config('app.debug'),
