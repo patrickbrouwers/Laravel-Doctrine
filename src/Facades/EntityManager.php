@@ -4,7 +4,7 @@ namespace Brouwers\LaravelDoctrine\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class Em extends Facade
+class EntityManager extends Facade
 {
     /**
      * Get the registered name of the component.
