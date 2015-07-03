@@ -29,7 +29,23 @@ return [
                 'namespace'     => false,
                 'path'          => storage_path('proxies'),
                 'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false)
-            ]
+            ],
+            /*
+            |--------------------------------------------------------------------------
+            | Doctrine events
+            |--------------------------------------------------------------------------
+            |
+            | If you want to use the Doctrine Extensions from Gedmo,
+            | you'll have to set this setting to true.
+            |
+            | The listener array expects the key to be a Doctrine event
+            | e.g. Doctrine\ORM\Events::onFlush
+            |
+            */
+            'events'     => [
+                'listeners'   => [],
+                'subscribers' => []
+            ],
         ]
     ],
     /*
@@ -114,7 +130,7 @@ return [
     |--------------------------------------------------------------------------
     */
     'custom_types'              => [
-        'json'             => Brouwers\LaravelDoctrine\Types\Json::class,
+        'json' => Brouwers\LaravelDoctrine\Types\Json::class,
         //'CarbonDate'       => DoctrineExtensions\Types\CarbonDateType::class,
         //'CarbonDateTime'   => DoctrineExtensions\Types\CarbonDateTimeType::class,
         //'CarbonDateTimeTz' => DoctrineExtensions\Types\CarbonDateTimeTzType::class,

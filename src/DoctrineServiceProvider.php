@@ -44,7 +44,6 @@ class DoctrineServiceProvider extends ServiceProvider
 
     /**
      * Indicates if loading of the provider is deferred.
-     *
      * @var bool
      */
     protected $defer = true;
@@ -116,6 +115,18 @@ class DoctrineServiceProvider extends ServiceProvider
                     ConnectionManager::resolve(array_get($settings, 'connection')),
                     MetaDataManager::resolve(array_get($settings, 'meta'))
                 );
+
+                if (isset($settings['events']['listeners'])) {
+                    foreach ($settings['events']['listeners'] as $event => $listener) {
+                        $manager->getEventManager()->addEventListener($event, $listener);
+                    }
+                }
+
+                if (isset($settings['events']['subscribers'])) {
+                    foreach ($settings['events']['subscribers'] as $subscriber) {
+                        $manager->getEventManager()->addEventSubscriber($subscriber);
+                    }
+                }
 
                 $configuration = $manager->getConfiguration();
 
