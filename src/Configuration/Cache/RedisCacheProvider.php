@@ -17,7 +17,7 @@ class RedisCacheProvider extends AbstractCacheProvider
      * @param array $config
      *
      * @throws DriverNotFound
-     * @return array
+     * @return RedisCacheProvider
      */
     public function configure($config = [])
     {
@@ -34,7 +34,7 @@ class RedisCacheProvider extends AbstractCacheProvider
 
     /**
      * @throws DriverNotFound
-     * @return mixed
+     * @return RedisCache
      */
     public function resolve()
     {

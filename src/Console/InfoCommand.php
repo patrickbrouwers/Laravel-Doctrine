@@ -3,6 +3,7 @@
 namespace Brouwers\LaravelDoctrine\Console;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\Mapping\MappingException;
 use Exception;
 
 class InfoCommand extends Command
@@ -35,8 +36,8 @@ class InfoCommand extends Command
             $em = $registry->getManager($name);
 
             $entityClassNames = $em->getConfiguration()
-                                   ->getMetadataDriverImpl()
-                                   ->getAllClassNames();
+                                    ->getMetadataDriverImpl()
+                                    ->getAllClassNames();
 
             if (!$entityClassNames) {
                 throw new Exception(

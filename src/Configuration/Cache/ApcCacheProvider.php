@@ -16,7 +16,7 @@ class ApcCacheProvider extends AbstractCacheProvider
      * @param array $config
      *
      * @throws DriverNotFound
-     * @return array
+     * @return ApcCacheProvider
      */
     public function configure($config = [])
     {

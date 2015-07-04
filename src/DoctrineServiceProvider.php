@@ -110,7 +110,7 @@ class DoctrineServiceProvider extends ServiceProvider
             $connectionName = IlluminateRegistry::getConnectionNamePrefix() . $manager;
 
             // Bind manager
-            $this->app->singleton($managerName, function () use ($settings) {
+            $this->app->singleton($managerName, function() use ($settings) {
 
                 $manager = EntityManager::create(
                     ConnectionManager::resolve(array_get($settings, 'connection')),
@@ -168,7 +168,7 @@ class DoctrineServiceProvider extends ServiceProvider
             });
 
             // Bind connection
-            $this->app->singleton($connectionName, function ($app) use ($manager) {
+            $this->app->singleton($connectionName, function($app) use ($manager) {
                 $app->make(IlluminateRegistry::getManagerNamePrefix() . $manager)->getConnection();
             });
 
@@ -185,7 +185,7 @@ class DoctrineServiceProvider extends ServiceProvider
     protected function registerEntityManager()
     {
         // Bind the default Entity Manager
-        $this->app->singleton('em', function ($app) {
+        $this->app->singleton('em', function($app) {
             return $app->make(ManagerRegistry::class)->getManager();
         });
 
@@ -198,7 +198,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function registerManagerRegistry()
     {
-        $this->app->singleton(IlluminateRegistry::class, function ($app) {
+        $this->app->singleton(IlluminateRegistry::class, function($app) {
 
             list($managers, $connections) = $this->setUpEntityManagers();
 
@@ -237,7 +237,7 @@ class DoctrineServiceProvider extends ServiceProvider
             $this->config['dev']
         );
 
-        MetaDataManager::resolved(function (Configuration $configuration) {
+        MetaDataManager::resolved(function(Configuration $configuration) {
 
             // Debugbar
             if ($this->config['debugbar'] === true) {
@@ -295,7 +295,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function registerClassMetaDataFactory()
     {
-        $this->app->singleton(ClassMetadataFactory::class, function ($app) {
+        $this->app->singleton(ClassMetadataFactory::class, function($app) {
             return $app['em']->getMetadataFactory();
         });
     }
@@ -307,7 +307,7 @@ class DoctrineServiceProvider extends ServiceProvider
     {
         // Bind extension manager as singleton,
         // so user can call it and add own extensions
-        $this->app->singleton(ExtensionManager::class, function ($app) {
+        $this->app->singleton(ExtensionManager::class, function($app) {
 
             $manager = new ExtensionManager(
                 $this->app[ManagerRegistry::class],
@@ -382,7 +382,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function extendAuthManager()
     {
-        $this->app[AuthManager::class]->extend('doctrine', function ($app) {
+        $this->app[AuthManager::class]->extend('doctrine', function($app) {
             return new DoctrineUserProvider(
                 $app[Hasher::class],
                 $app['em'],
@@ -396,7 +396,7 @@ class DoctrineServiceProvider extends ServiceProvider
      */
     protected function extendMigrator()
     {
-        $this->app->bindShared('migration.repository', function ($app) {
+        $this->app->bind('migration.repository', function($app) {
             return $app->make(DoctrineMigrationRepository::class);
         });
     }
@@ -411,7 +411,7 @@ class DoctrineServiceProvider extends ServiceProvider
 
     /**
      * Get the services provided by the provider.
-     * @return array
+     * @return string[]
      */
     public function provides()
     {

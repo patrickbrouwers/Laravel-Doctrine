@@ -2,12 +2,12 @@
 
 <img src="https://cloud.githubusercontent.com/assets/7728097/8503648/de6beb86-21c2-11e5-9d70-ed4c24185a7e.jpg"/>
 
-[![GitHub release](https://img.shields.io/github/release/Brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
-[![Travis](https://img.shields.io/travis/Brouwers/Laravel-Doctrine.svg?style=flat)](https://travis-ci.org/Brouwers/Laravel-Doctrine)
-[![Scrutinizer](https://img.shields.io/scrutinizer/g/Brouwers/Laravel-Doctrine.svg?style=flat)](https://github.com/Brouwers/Laravel-Doctrine)
-[![Packagist](https://img.shields.io/packagist/dd/Brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
-[![Packagist](https://img.shields.io/packagist/dm/Brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
-[![Packagist](https://img.shields.io/packagist/dt/Brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
+[![GitHub release](https://img.shields.io/github/release/patrickbrouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
+[![Travis](https://img.shields.io/travis/patrickbrouwers/Laravel-Doctrine.svg?style=flat)](https://travis-ci.org/patrickbrouwers/Laravel-Doctrine)
+[![Scrutinizer](https://img.shields.io/scrutinizer/g/patrickbrouwers/Laravel-Doctrine.svg?style=flat)](https://github.com/patrickbrouwers/Laravel-Doctrine)
+[![Packagist](https://img.shields.io/packagist/dd/brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
+[![Packagist](https://img.shields.io/packagist/dm/brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
+[![Packagist](https://img.shields.io/packagist/dt/brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
 
 *A drop-in Doctrine ORM 2 implementation for Laravel 5+*
 
@@ -137,6 +137,8 @@ class Article
     }
 }
 ```
+
+To quickly create the `articles` table inside your database, run: `php artisan doctrine:schema:update`
 
 Continue reading [the full documentation](https://github.com/patrickbrouwers/Laravel-Doctrine/wiki).
 

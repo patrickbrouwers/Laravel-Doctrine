@@ -45,7 +45,7 @@ trait ExtendableTrait
     }
 
     /**
-     * @param callable $callback
+     * @param Closure $callback
      */
     public static function resolved(Closure $callback)
     {
@@ -109,4 +109,12 @@ trait ExtendableTrait
     {
         return self::getInstance()->drivers;
     }
+
+    /**
+     * @param          $driver
+     * @param  Closure $callback
+     * @param  null     $class
+     * @return Driver
+     */
+    abstract public function transformToDriver($driver, Closure $callback = null, $class = null);
 }

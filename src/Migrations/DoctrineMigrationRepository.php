@@ -47,8 +47,8 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface
     public function getRan()
     {
         $migrations = $this->query()
-                           ->getQuery()
-                           ->getResult();
+                            ->getQuery()
+                            ->getResult();
 
         $return = [];
         foreach ($migrations as $migration) {
@@ -95,11 +95,11 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface
     public function delete($migration)
     {
         $this->em->createQueryBuilder()
-                 ->delete(Migration::class, 'o')
-                 ->andWhere('o.migration = :migration')
-                 ->setParameter('migration', $migration->migration)
-                 ->getQuery()
-                 ->execute();
+                    ->delete(Migration::class, 'o')
+                    ->andWhere('o.migration = :migration')
+                    ->setParameter('migration', $migration->migration)
+                    ->getQuery()
+                    ->execute();
     }
 
     /**
@@ -118,9 +118,9 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface
     public function getLastBatchNumber()
     {
         $result = $this->em->createQueryBuilder()
-                           ->select('o, MAX(o.batch) as max_batch')
-                           ->from(Migration::class, 'o')
-                           ->getQuery()->getResult()[0]['max_batch'];
+                            ->select('o, MAX(o.batch) as max_batch')
+                            ->from(Migration::class, 'o')
+                            ->getQuery()->getResult()[0]['max_batch'];
 
         return $result ?: 0;
     }
@@ -141,7 +141,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface
     public function repositoryExists()
     {
         $schema = $this->em->getConnection()->getSchemaManager();
-        $tables = array_filter($schema->listTables(), function ($value) {
+        $tables = array_filter($schema->listTables(), function($value) {
             return $value->getName() === 'migrations';
         });
 

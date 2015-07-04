@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Auth\Passwords;
 
-use Carbon\Carbon;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -23,7 +23,7 @@ class PasswordReminder
     protected $token;
 
     /**
-     * @ORM\Column(name="created_at", type="CarbonDateTime", nullable=false)
+     * @ORM\Column(name="created_at", type="datetime", nullable=false)
      * @var DateTime
      */
     protected $createdAt;
@@ -36,12 +36,12 @@ class PasswordReminder
     {
         $this->email     = $email;
         $this->token     = $token;
-        $this->createdAt = Carbon::now();
+        $this->createdAt = new DateTime;
     }
 
     /**
      * Returns when the reminder was created.
-     * @return Carbon
+     * @return DateTime
      */
     public function getCreatedAt()
     {

@@ -12,7 +12,7 @@ class SqlsrvConnection extends AbstractConnection
     /**
      * @param array $config
      *
-     * @return array
+     * @return SqlsrvConnection
      */
     public function configure($config = [])
     {

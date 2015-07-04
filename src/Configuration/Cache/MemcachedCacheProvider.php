@@ -17,7 +17,7 @@ class MemcachedCacheProvider extends AbstractCacheProvider
      * @param array $config
      *
      * @throws DriverNotFound
-     * @return array
+     * @return MemcachedCacheProvider
      */
     public function configure($config = [])
     {

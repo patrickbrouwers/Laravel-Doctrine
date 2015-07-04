@@ -9,7 +9,7 @@ interface Connection extends Driver
     /**
      * @param array $config
      *
-     * @return array
+     * @return Connection
      */
     public function configure($config = []);
 }

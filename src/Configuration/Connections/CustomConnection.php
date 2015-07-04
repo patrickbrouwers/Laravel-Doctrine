@@ -17,7 +17,7 @@ class CustomConnection extends AbstractConnection
     /**
      * @param array $config
      *
-     * @return array
+     * @return CustomConnection
      */
     public function configure($config = [])
     {

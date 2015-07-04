@@ -25,8 +25,8 @@ class PaginatorAdapter
     public function make(Query $query, $perPage = '15', $pageName = 'page', $fetchJoinCollection = true)
     {
         $this->query($query)
-             ->skip($this->getSkipAmount($perPage, $pageName))
-             ->take($perPage);
+                ->skip($this->getSkipAmount($perPage, $pageName))
+                ->take($perPage);
 
         return $this->convertToLaravelPaginator(
             $this->getDoctrinePaginator($fetchJoinCollection),

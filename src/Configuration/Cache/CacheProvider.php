@@ -9,7 +9,7 @@ interface CacheProvider extends Driver
     /**
      * @param array $config
      *
-     * @return array
+     * @return CacheProvider
      */
     public function configure($config = []);
 }

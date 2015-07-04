@@ -12,7 +12,7 @@ class MysqlConnection extends AbstractConnection
     /**
      * @param array $config
      *
-     * @return array
+     * @return MysqlConnection
      */
     public function configure($config = [])
     {

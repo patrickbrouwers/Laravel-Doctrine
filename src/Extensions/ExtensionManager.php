@@ -17,7 +17,7 @@ class ExtensionManager
     protected $extensions = [];
 
     /**
-     * @var arary
+     * @var array
      */
     protected $gedmo = [
         'enabled' => false

@@ -28,6 +28,10 @@
     "gedmo/doctrine-extensions": "~2.4.1",
     "beberlei/DoctrineExtensions": "^1.0"
   },
+  "suggest": {
+    "gedmo/doctrine-extensions": "Behavioral Doctrine2 extensions (~2.4.1)",
+    "beberlei/DoctrineExtensions": "Query/Type Doctrine2 extensions (^1.0)"
+  },
   "autoload": {
     "psr-4": {
       "Brouwers\\LaravelDoctrine\\": "src/"

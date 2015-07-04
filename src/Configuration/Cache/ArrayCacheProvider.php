@@ -15,7 +15,7 @@ class ArrayCacheProvider extends AbstractCacheProvider
      * @param array $config
      *
      * @throws DriverNotFound
-     * @return array
+     * @return ArrayCacheProvider
      */
     public function configure($config = [])
     {

@@ -27,7 +27,7 @@ class CustomCacheProvider extends AbstractCacheProvider
     /**
      * @param array $config
      *
-     * @return array
+     * @return CustomCacheProvider
      */
     public function configure($config = [])
     {

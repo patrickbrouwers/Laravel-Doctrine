@@ -12,7 +12,7 @@ class PgsqlConnection extends AbstractConnection
     /**
      * @param array $config
      *
-     * @return array
+     * @return PgsqlConnection
      */
     public function configure($config = [])
     {

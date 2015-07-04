@@ -97,12 +97,12 @@ class DoctrineTokenRepository implements TokenRepositoryInterface
         $email = $user->getEmailForPasswordReset();
 
         $reminder = $this->makeSelect()
-                         ->where('o.email = :email')
-                         ->andWhere('o.token = :token')
-                         ->setParameter('email', $email)
-                         ->setParameter('token', $token)
-                         ->getQuery()
-                         ->getOneOrNullResult();
+                            ->where('o.email = :email')
+                            ->andWhere('o.token = :token')
+                            ->setParameter('email', $email)
+                            ->setParameter('token', $token)
+                            ->getQuery()
+                            ->getOneOrNullResult();
 
         return $reminder != null && !$this->reminderExpired($reminder);
     }
@@ -131,10 +131,10 @@ class DoctrineTokenRepository implements TokenRepositoryInterface
     public function delete($token)
     {
         $this->makeDelete()
-             ->where('o.token = :token')
-             ->setParameter('token', $token)
-             ->getQuery()
-             ->execute();
+                ->where('o.token = :token')
+                ->setParameter('token', $token)
+                ->getQuery()
+                ->execute();
     }
 
     /**
@@ -146,10 +146,10 @@ class DoctrineTokenRepository implements TokenRepositoryInterface
         $expired = Carbon::now()->subSeconds($this->expires);
 
         $this->makeDelete()
-             ->where('o.createdAt < :expired')
-             ->setParameter('expired', $expired)
-             ->getQuery()
-             ->execute();
+                ->where('o.createdAt < :expired')
+                ->setParameter('expired', $expired)
+                ->getQuery()
+                ->execute();
     }
 
     /**
@@ -158,8 +158,8 @@ class DoctrineTokenRepository implements TokenRepositoryInterface
     protected function makeSelect()
     {
         return $this->entities->createQueryBuilder()
-                              ->select('o')
-                              ->from(PasswordReminder::class, 'o');
+                                ->select('o')
+                                ->from(PasswordReminder::class, 'o');
     }
 
     /**
@@ -168,6 +168,6 @@ class DoctrineTokenRepository implements TokenRepositoryInterface
     protected function makeDelete()
     {
         return $this->entities->createQueryBuilder()
-                              ->delete(PasswordReminder::class, 'o');
+                                ->delete(PasswordReminder::class, 'o');
     }
 }

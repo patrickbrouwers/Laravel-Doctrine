@@ -12,7 +12,7 @@ class SqliteConnection extends AbstractConnection
     /**
      * @param array $config
      *
-     * @return array
+     * @return SqliteConnection
      */
     public function configure($config = [])
     {

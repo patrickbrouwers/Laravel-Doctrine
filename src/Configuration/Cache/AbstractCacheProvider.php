@@ -10,12 +10,9 @@ abstract class AbstractCacheProvider implements CacheProvider
     protected $config;
 
     /**
-     * @return mixed
+     * @var string
      */
-    public function getCache()
-    {
-        return $this->cache;
-    }
+    protected $name;
 
     /**
      * @return string
