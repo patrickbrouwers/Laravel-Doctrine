@@ -7,9 +7,23 @@ use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Gedmo\Loggable\LoggableListener;
+use Illuminate\Contracts\Auth\Guard;
 
 class LoggableExtension implements Extension
 {
+    /**
+     * @var Guard
+     */
+    protected $guard;
+
+    /**
+     * @param Guard $guard
+     */
+    public function __construct(Guard $guard)
+    {
+        $this->guard = $guard;
+    }
+
     /**
      * @param EventManager           $manager
      * @param EntityManagerInterface $em
@@ -21,6 +35,13 @@ class LoggableExtension implements Extension
         $subscriber->setAnnotationReader(
             $reader
         );
+
+        if ($this->guard->check()) {
+            $subscriber->setUsername(
+                $this->guard->user()
+            );
+        }
+
         $manager->addEventSubscriber($subscriber);
     }
 

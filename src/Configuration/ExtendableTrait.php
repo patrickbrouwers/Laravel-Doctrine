@@ -113,7 +113,7 @@ trait ExtendableTrait
     /**
      * @param          $driver
      * @param  Closure $callback
-     * @param  null     $class
+     * @param  null    $class
      * @return Driver
      */
     abstract public function transformToDriver($driver, Closure $callback = null, $class = null);

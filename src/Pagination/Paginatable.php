@@ -21,7 +21,7 @@ trait Paginatable
 
     /**
      * @param Query  $query
-     * @param        integer $perPage
+     * @param int    $perPage
      * @param bool   $fetchJoinCollection
      * @param string $pageName
      *

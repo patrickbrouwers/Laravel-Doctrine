@@ -141,7 +141,7 @@ class DoctrineMigrationRepository implements MigrationRepositoryInterface
     public function repositoryExists()
     {
         $schema = $this->em->getConnection()->getSchemaManager();
-        $tables = array_filter($schema->listTables(), function($value) {
+        $tables = array_filter($schema->listTables(), function ($value) {
             return $value->getName() === 'migrations';
         });
 

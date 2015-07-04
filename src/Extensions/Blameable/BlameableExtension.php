@@ -33,7 +33,11 @@ class BlameableExtension implements Extension
     {
         $subscriber = new BlameableListener();
         $subscriber->setAnnotationReader($reader);
-        $subscriber->setUserValue($this->guard->user());
+
+        if ($this->guard->check()) {
+            $subscriber->setUserValue($this->guard->user());
+        }
+
         $manager->addEventSubscriber($subscriber);
     }
 
