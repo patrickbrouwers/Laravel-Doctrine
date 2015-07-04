@@ -46,6 +46,7 @@ return [
                 'listeners'   => [],
                 'subscribers' => []
             ],
+            'filters' => []
         ]
     ],
     /*

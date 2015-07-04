@@ -14,7 +14,7 @@ class MetaDataManagerTest extends PHPUnit_Framework_TestCase
             'annotations' => [
                 'paths' => []
             ]
-        ]);
+        ], true);
     }
 
     public function test_register_metadatas()
@@ -42,7 +42,7 @@ class MetaDataManagerTest extends PHPUnit_Framework_TestCase
     public function test_custom_metadata_can_be_set()
     {
         MetaDataManager::extend('custom', function () {
-            return Setup::createAnnotationMetadataConfiguration([], false);
+            return Setup::createAnnotationMetadataConfiguration([], true);
         });
 
         $driver = MetaDataManager::resolve('custom');

@@ -117,19 +117,29 @@ class DoctrineServiceProvider extends ServiceProvider
                     MetaDataManager::resolve(array_get($settings, 'meta'))
                 );
 
+                $configuration = $manager->getConfiguration();
+
+                // Listeners
                 if (isset($settings['events']['listeners'])) {
                     foreach ($settings['events']['listeners'] as $event => $listener) {
                         $manager->getEventManager()->addEventListener($event, $listener);
                     }
                 }
 
+                // Subscribers
                 if (isset($settings['events']['subscribers'])) {
                     foreach ($settings['events']['subscribers'] as $subscriber) {
                         $manager->getEventManager()->addEventSubscriber($subscriber);
                     }
                 }
 
-                $configuration = $manager->getConfiguration();
+                // Filters
+                if (isset($settings['filters'])) {
+                    foreach ($settings['filters'] as $name => $filter) {
+                        $configuration->getMetadataDriverImpl()->addFilter($name, $filter);
+                        $manager->getFilters()->enable($name);
+                    }
+                }
 
                 // Paths
                 $configuration->getMetadataDriverImpl()->addPaths(
