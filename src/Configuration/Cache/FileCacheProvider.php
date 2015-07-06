@@ -2,7 +2,7 @@
 
 namespace Brouwers\LaravelDoctrine\Configuration\Cache;
 
-use Doctrine\Common\Cache\PhpFileCache;
+use Doctrine\Common\Cache\FilesystemCache;
 
 class FileCacheProvider extends AbstractCacheProvider
 {
@@ -25,10 +25,10 @@ class FileCacheProvider extends AbstractCacheProvider
     }
 
     /**
-     * @return PhpFileCache
+     * @return FilesystemCache
      */
     public function resolve()
     {
-        return new PhpFileCache($this->config['path']);
+        return new FilesystemCache($this->config['path']);
     }
 }
