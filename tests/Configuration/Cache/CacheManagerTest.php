@@ -3,8 +3,7 @@
 use Brouwers\LaravelDoctrine\Configuration\Cache\AbstractCacheProvider;
 use Brouwers\LaravelDoctrine\Configuration\Cache\CacheManager;
 use Brouwers\LaravelDoctrine\Configuration\Cache\FileCacheProvider;
-use Doctrine\Common\Cache\PhpFileCache;
-use Doctrine\ORM\Tools\Setup;
+use Doctrine\Common\Cache\FilesystemCache;
 
 class CacheManagerTest extends PHPUnit_Framework_TestCase
 {
@@ -29,24 +28,24 @@ class CacheManagerTest extends PHPUnit_Framework_TestCase
         CacheManager::extend('file', function ($driver) {
 
             // Should give instance of the already registered driver
-            $this->assertInstanceOf(PhpFileCache::class, $driver);
+            $this->assertInstanceOf(FilesystemCache::class, $driver);
 
             return $driver;
         });
 
         $driver = CacheManager::resolve('file');
 
-        $this->assertInstanceOf(PhpFileCache::class, $driver);
+        $this->assertInstanceOf(FilesystemCache::class, $driver);
     }
 
     public function test_custom_cache_can_be_set()
     {
         CacheManager::extend('custom', function () {
-            return new PhpFileCache('path');
+            return new FilesystemCache('path');
         });
 
         $driver = CacheManager::resolve('custom');
-        $this->assertInstanceOf(PhpFileCache::class, $driver);
+        $this->assertInstanceOf(FilesystemCache::class, $driver);
     }
 
     public function test_a_string_class_can_be_use_as_extend()
