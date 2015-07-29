@@ -151,11 +151,6 @@ class DoctrineServiceProvider extends ServiceProvider
                     array_get($settings, 'repository', \Doctrine\ORM\EntityRepository::class)
                 );
 
-                // Proxies
-                $configuration->setProxyDir(
-                    array_get($settings, 'proxies.path', storage_path('proxies'))
-                );
-
                 $configuration->setAutoGenerateProxyClasses(
                     array_get($settings, 'proxies.auto_generate', false)
                 );
