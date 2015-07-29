@@ -27,7 +27,6 @@ return [
             'repository' => Doctrine\ORM\EntityRepository::class,
             'proxies'    => [
                 'namespace'     => false,
-                'path'          => storage_path('proxies'),
                 'auto_generate' => env('DOCTRINE_PROXY_AUTOGENERATE', false)
             ],
             /*
@@ -64,7 +63,10 @@ return [
         'drivers'    => [
             'annotations' => [
                 'driver' => 'annotations',
-                'simple' => false
+                'simple' => false,
+                'proxies'    => [
+                    'path' => storage_path('proxies'),
+                ],
             ],
             'yaml'        => [
                 'driver' => 'yaml'
