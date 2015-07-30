@@ -166,7 +166,7 @@ return [
         //'FIND_IN_SET' => DoctrineExtensions\Query\Mysql\FindInSet::class,
         //'REPLACE'     => DoctrineExtensions\Query\Mysql\Replace::class,
         //'SOUNDEX'     => DoctrineExtensions\Query\Mysql\Soundex::class,
-        //'STR_TO_DATE' => DoctrineExtensions\Query\Mysql\StrToDat::class
+        //'STR_TO_DATE' => DoctrineExtensions\Query\Mysql\StrToDate::class
     ],
     /*
     |--------------------------------------------------------------------------
