@@ -9,6 +9,8 @@
 [![Packagist](https://img.shields.io/packagist/dm/brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
 [![Packagist](https://img.shields.io/packagist/dt/brouwers/Laravel-Doctrine.svg?style=flat)](https://packagist.org/packages/brouwers/laravel-doctrine)
 
+> This package is abandoned and no longer maintained. The author suggests using the [laravel-doctrine/orm](https://github.com/laravel-doctrine/orm) package instead.
+
 *A drop-in Doctrine ORM 2 implementation for Laravel 5+*
 
 * Easy configuration
